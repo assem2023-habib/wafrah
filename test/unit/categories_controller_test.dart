@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wafrah/core/constants/app_strings.dart';
 import 'package:wafrah/data/models/category.dart';
+import 'package:wafrah/data/models/product.dart';
 import 'package:wafrah/data/models/transaction.dart';
 import 'package:wafrah/data/repositories/interfaces/category_repository_interface.dart';
+import 'package:wafrah/data/repositories/interfaces/product_repository_interface.dart';
 import 'package:wafrah/data/repositories/interfaces/transaction_repository_interface.dart';
 import 'package:wafrah/modules/categories/categories_controller.dart';
 
@@ -74,14 +76,46 @@ class FakeTransactionRepository implements ITransactionRepository {
   }
 }
 
+class FakeProductRepository implements IProductRepository {
+  FakeProductRepository(this._items);
+
+  final List<Product> _items;
+
+  @override
+  Future<List<Product>> getAll() async => List.of(_items);
+
+  @override
+  Future<List<Product>> getByCategory(String categoryId) async =>
+      _items.where((p) => p.categoryId == categoryId).toList();
+
+  @override
+  Future<Product> add(Product product) async {
+    _items.add(product);
+    return product;
+  }
+
+  @override
+  Future<void> update(Product product) async {
+    final index = _items.indexWhere((p) => p.id == product.id);
+    if (index != -1) _items[index] = product;
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    _items.removeWhere((p) => p.id == id);
+  }
+}
+
 void main() {
   CategoriesController buildController({
     List<Category> categories = const [],
     List<Transaction> transactions = const [],
+    List<Product> products = const [],
   }) {
     return CategoriesController(
       categoryRepository: FakeCategoryRepository(List.of(categories)),
       transactionRepository: FakeTransactionRepository(List.of(transactions)),
+      productRepository: FakeProductRepository(List.of(products)),
     );
   }
 
@@ -171,6 +205,27 @@ void main() {
             categoryId: 'c1',
             date: DateTime(2026, 8, 10),
           ),
+        ],
+      );
+      await controller.load();
+
+      await controller.delete(category);
+
+      expect(controller.refsError.value, AppStrings.deleteBlocked);
+      expect(controller.categories, hasLength(1));
+    });
+
+    test('delete is blocked when category has products', () async {
+      final category = Category(
+        id: 'c1',
+        name: 'طعام',
+        iconCode: 'salad',
+        type: CategoryType.expense,
+      );
+      final controller = buildController(
+        categories: [category],
+        products: [
+          const Product(id: 'p1', name: 'خبز', categoryId: 'c1'),
         ],
       );
       await controller.load();

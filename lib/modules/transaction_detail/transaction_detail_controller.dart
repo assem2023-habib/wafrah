@@ -1,12 +1,14 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/transaction.dart';
 import '../../data/repositories/interfaces/category_repository_interface.dart';
 import '../../data/repositories/interfaces/product_repository_interface.dart';
 import '../../data/repositories/interfaces/transaction_repository_interface.dart';
+import '../../routes/app_pages.dart' show AppPages;
 import '../../routes/app_routes.dart';
 
-class TransactionDetailController extends GetxController {
+class TransactionDetailController extends GetxController with RouteAware {
   TransactionDetailController({
     required ITransactionRepository transactionRepository,
     required ICategoryRepository categoryRepository,
@@ -22,13 +24,42 @@ class TransactionDetailController extends GetxController {
   final Rx<Transaction?> transaction = Rx<Transaction?>(null);
   final RxString categoryName = ''.obs;
   final RxString productName = ''.obs;
+  final RxBool confirmDelete = false.obs;
+
+  String? _id;
 
   @override
   void onInit() {
     super.onInit();
-    final id = Get.arguments as String?;
-    if (id != null) {
-      load(id);
+    _id = Get.arguments as String?;
+    if (_id != null) {
+      load(_id!);
+    }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    final context = Get.key.currentContext;
+    if (context == null) {
+      return;
+    }
+    final route = ModalRoute.of(context);
+    if (route != null && route is PageRoute) {
+      AppPages.appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void onClose() {
+    AppPages.appRouteObserver.unsubscribe(this);
+    super.onClose();
+  }
+
+  @override
+  void didPopNext() {
+    if (_id != null) {
+      load(_id!);
     }
   }
 
@@ -41,6 +72,8 @@ class TransactionDetailController extends GetxController {
     if (tx.categoryId != null) {
       final category = await _categoryRepository.getById(tx.categoryId!);
       categoryName.value = category?.name ?? '';
+    } else {
+      categoryName.value = '';
     }
     if (tx.productId != null) {
       final products = await _productRepository.getAll();
@@ -50,7 +83,13 @@ class TransactionDetailController extends GetxController {
           break;
         }
       }
+    } else {
+      productName.value = '';
     }
+  }
+
+  void toggleConfirmDelete() {
+    confirmDelete.value = !confirmDelete.value;
   }
 
   Future<void> delete() async {

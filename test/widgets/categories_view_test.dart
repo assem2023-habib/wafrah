@@ -2,8 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:wafrah/core/constants/app_strings.dart';
 import 'package:wafrah/data/models/category.dart';
+import 'package:wafrah/data/models/product.dart';
 import 'package:wafrah/data/models/transaction.dart';
 import 'package:wafrah/data/repositories/interfaces/category_repository_interface.dart';
+import 'package:wafrah/data/repositories/interfaces/product_repository_interface.dart';
 import 'package:wafrah/data/repositories/interfaces/transaction_repository_interface.dart';
 import 'package:wafrah/modules/categories/categories_controller.dart';
 import 'package:wafrah/modules/categories/categories_view.dart';
@@ -76,6 +78,36 @@ class FakeTransactionRepository implements ITransactionRepository {
   }
 }
 
+class FakeProductRepository implements IProductRepository {
+  FakeProductRepository(this._items);
+
+  final List<Product> _items;
+
+  @override
+  Future<List<Product>> getAll() async => List.of(_items);
+
+  @override
+  Future<List<Product>> getByCategory(String categoryId) async =>
+      _items.where((p) => p.categoryId == categoryId).toList();
+
+  @override
+  Future<Product> add(Product product) async {
+    _items.add(product);
+    return product;
+  }
+
+  @override
+  Future<void> update(Product product) async {
+    final index = _items.indexWhere((p) => p.id == product.id);
+    if (index != -1) _items[index] = product;
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    _items.removeWhere((p) => p.id == id);
+  }
+}
+
 void main() {
   setUp(() {
     Get.reset();
@@ -98,6 +130,7 @@ void main() {
         ),
       ]),
       transactionRepository: FakeTransactionRepository(const []),
+      productRepository: FakeProductRepository(const []),
     );
     Get.put(controller);
     await tester.pumpWidget(
@@ -116,6 +149,7 @@ void main() {
     final controller = CategoriesController(
       categoryRepository: FakeCategoryRepository(const []),
       transactionRepository: FakeTransactionRepository(const []),
+      productRepository: FakeProductRepository(const []),
     );
     Get.put(controller);
     await tester.pumpWidget(
@@ -131,6 +165,7 @@ void main() {
     final controller = CategoriesController(
       categoryRepository: FakeCategoryRepository(const []),
       transactionRepository: FakeTransactionRepository(const []),
+      productRepository: FakeProductRepository(const []),
     );
     Get.put(controller);
     await tester.pumpWidget(

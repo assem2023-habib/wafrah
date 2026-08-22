@@ -66,10 +66,12 @@ class ProductsView extends StatelessWidget {
                         const SizedBox(height: AppDimens.gapMd),
                       ],
                       if (controller.products.isEmpty)
-                        const AppEmptyState(
+                        AppEmptyState(
                           icon: TablerIcons.box,
                           title: AppStrings.noProducts,
                           description: AppStrings.noProductsDesc,
+                          actionLabel: AppStrings.addProduct,
+                          onAction: controller.startAdd,
                         )
                       else
                         for (final group in controller.groups)

@@ -20,6 +20,8 @@ class AppStrings {
   static const String allTransactions = 'جميع المعاملات';
   static const String addExpenseTitle = 'إضافة مصروف';
   static const String addIncomeTitle = 'إضافة دخل';
+  static const String editExpenseTitle = 'تعديل المصروف';
+  static const String editIncomeTitle = 'تعديل الدخل';
 
   static const String navHome = 'الرئيسية';
   static const String transactions = 'المعاملات';

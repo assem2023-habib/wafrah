@@ -54,12 +54,17 @@ class TransactionDetailView extends StatelessWidget {
                           onPressed: controller.edit,
                         ),
                         const SizedBox(height: AppDimens.gapSm),
-                        AppPrimaryButton(
-                          label: AppStrings.deleteTransaction,
-                          variant: 'danger',
-                          icon: TablerIcons.trash,
-                          onPressed: () =>
-                              _confirmDelete(context, controller),
+                        Obx(
+                          () => controller.confirmDelete.value
+                              ? _ConfirmDeleteSection(
+                                  controller: controller,
+                                )
+                              : AppPrimaryButton(
+                                  label: AppStrings.deleteTransaction,
+                                  variant: 'danger',
+                                  icon: TablerIcons.trash,
+                                  onPressed: controller.toggleConfirmDelete,
+                                ),
                         ),
                       ],
                     ),
@@ -72,33 +77,46 @@ class TransactionDetailView extends StatelessWidget {
       ),
     );
   }
+}
 
-  static Future<void> _confirmDelete(
-    BuildContext context,
-    TransactionDetailController controller,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        content: const Text(AppStrings.deleteConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(AppStrings.cancel),
+class _ConfirmDeleteSection extends StatelessWidget {
+  const _ConfirmDeleteSection({required this.controller});
+
+  final TransactionDetailController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          AppStrings.deleteConfirm,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: AppDimens.fontSizeLabel,
+            color: AppColors.textSecondary,
           ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.danger,
+        ),
+        const SizedBox(height: AppDimens.gapSm),
+        Row(
+          children: [
+            Expanded(
+              child: AppPrimaryButton(
+                label: AppStrings.confirmDelete,
+                variant: 'danger',
+                onPressed: controller.delete,
+              ),
             ),
-            child: const Text(AppStrings.confirmDelete),
-          ),
-        ],
-      ),
+            const SizedBox(width: AppDimens.gapSm),
+            Expanded(
+              child: AppSecondaryButton(
+                label: AppStrings.cancel,
+                onPressed: controller.toggleConfirmDelete,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
-    if (confirmed == true) {
-      controller.delete();
-    }
   }
 }
 
@@ -147,15 +165,15 @@ class _HeroCard extends StatelessWidget {
               vertical: AppDimens.gapXs,
             ),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.10),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(AppDimens.radiusFull),
             ),
             child: Text(
               badge,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppDimens.fontSizeLabel,
                 fontWeight: AppDimens.fontWeightMedium,
-                color: AppColors.primary,
+                color: color,
               ),
             ),
           ),

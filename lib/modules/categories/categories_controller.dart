@@ -8,17 +8,21 @@ import '../../core/constants/app_strings.dart';
 import '../../core/utils/validators.dart';
 import '../../data/models/category.dart';
 import '../../data/repositories/interfaces/category_repository_interface.dart';
+import '../../data/repositories/interfaces/product_repository_interface.dart';
 import '../../data/repositories/interfaces/transaction_repository_interface.dart';
 
 class CategoriesController extends GetxController {
   CategoriesController({
     required ICategoryRepository categoryRepository,
     required ITransactionRepository transactionRepository,
+    required IProductRepository productRepository,
   })  : _categoryRepository = categoryRepository,
-        _transactionRepository = transactionRepository;
+        _transactionRepository = transactionRepository,
+        _productRepository = productRepository;
 
   final ICategoryRepository _categoryRepository;
   final ITransactionRepository _transactionRepository;
+  final IProductRepository _productRepository;
 
   static const List<(String, IconData)> iconOptions = [
     ('salad', TablerIcons.salad),
@@ -138,6 +142,11 @@ class CategoriesController extends GetxController {
     final transactions = await _transactionRepository.getAll();
     final used = transactions.any((tx) => tx.categoryId == category.id);
     if (used) {
+      refsError.value = AppStrings.deleteBlocked;
+      return;
+    }
+    final products = await _productRepository.getByCategory(category.id);
+    if (products.isNotEmpty) {
       refsError.value = AppStrings.deleteBlocked;
       return;
     }

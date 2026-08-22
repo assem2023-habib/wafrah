@@ -23,9 +23,13 @@ class AddIncomeView extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(AppDimens.spacingMd),
-              child: PageHeader(
-                title: AppStrings.addIncomeTitle,
-                onBack: Get.back,
+              child: Obx(
+                () => PageHeader(
+                  title: controller.isEdit.value
+                      ? AppStrings.editIncomeTitle
+                      : AppStrings.addIncomeTitle,
+                  onBack: Get.back,
+                ),
               ),
             ),
             Expanded(
@@ -77,7 +81,9 @@ class AddIncomeView extends StatelessWidget {
           child: Obx(
             () => AppPrimaryButton(
               variant: 'primary',
-              label: AppStrings.saveIncome,
+              label: controller.isEdit.value
+                  ? AppStrings.updateIncome
+                  : AppStrings.saveIncome,
               onPressed: controller.saving.value ? null : controller.save,
             ),
           ),

@@ -29,9 +29,13 @@ class AddExpenseView extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(AppDimens.spacingMd),
-              child: PageHeader(
-                title: AppStrings.addExpenseTitle,
-                onBack: Get.back,
+              child: Obx(
+                () => PageHeader(
+                  title: controller.isEdit.value
+                      ? AppStrings.editExpenseTitle
+                      : AppStrings.addExpenseTitle,
+                  onBack: Get.back,
+                ),
               ),
             ),
             Expanded(
@@ -114,7 +118,9 @@ class AddExpenseView extends StatelessWidget {
           child: Obx(
             () => AppPrimaryButton(
               variant: 'secondary',
-              label: AppStrings.saveExpense,
+              label: controller.isEdit.value
+                  ? AppStrings.updateExpense
+                  : AppStrings.saveExpense,
               onPressed:
                   controller.saving.value ? null : controller.save,
             ),

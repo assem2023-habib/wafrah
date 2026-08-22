@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/category.dart';
@@ -6,10 +7,11 @@ import '../../data/models/transaction.dart';
 import '../../data/repositories/interfaces/category_repository_interface.dart';
 import '../../data/repositories/interfaces/product_repository_interface.dart';
 import '../../data/repositories/interfaces/transaction_repository_interface.dart';
+import '../../routes/app_pages.dart' show AppPages;
 
 enum PeriodFilter { day, week, month }
 
-class TransactionsController extends GetxController {
+class TransactionsController extends GetxController with RouteAware {
   TransactionsController({
     required ITransactionRepository transactionRepository,
     required ICategoryRepository categoryRepository,
@@ -29,6 +31,7 @@ class TransactionsController extends GetxController {
   final Rx<Category?> categoryFilter = Rx<Category?>(null);
   final Rx<Product?> productFilter = Rx<Product?>(null);
   final Rx<PeriodFilter?> periodFilter = Rx<PeriodFilter?>(null);
+  final RxString searchQuery = RxString('');
 
   final RxList<Category> _categories = <Category>[].obs;
   final RxList<Product> _products = <Product>[].obs;
@@ -43,11 +46,36 @@ class TransactionsController extends GetxController {
       typeFilter.value != null ||
       categoryFilter.value != null ||
       productFilter.value != null ||
-      periodFilter.value != null;
+      periodFilter.value != null ||
+      searchQuery.value.isNotEmpty;
 
   @override
   void onInit() {
     super.onInit();
+    load();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    final context = Get.key.currentContext;
+    if (context == null) {
+      return;
+    }
+    final route = ModalRoute.of(context);
+    if (route != null && route is PageRoute) {
+      AppPages.appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void onClose() {
+    AppPages.appRouteObserver.unsubscribe(this);
+    super.onClose();
+  }
+
+  @override
+  void didPopNext() {
     load();
   }
 
@@ -94,16 +122,32 @@ class TransactionsController extends GetxController {
     final category = categoryFilter.value;
     final product = productFilter.value;
     final period = periodFilter.value;
+    final query = searchQuery.value.trim();
 
     final result = all.where((tx) {
       if (type != null && tx.type != type) return false;
       if (category != null && tx.categoryId != category.id) return false;
       if (product != null && tx.productId != product.id) return false;
       if (period != null && !_inPeriod(tx.date, period)) return false;
+      if (query.isNotEmpty && !_matchesQuery(tx, query)) return false;
       return true;
     }).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
     filtered.assignAll(result);
+  }
+
+  bool _matchesQuery(Transaction tx, String query) {
+    final categoryName = _categoryCache[tx.categoryId]?.name ?? '';
+    final productName = _productCache[tx.productId]?.name ?? '';
+    final note = tx.note ?? '';
+    return categoryName.contains(query) ||
+        productName.contains(query) ||
+        note.contains(query);
+  }
+
+  void setSearchQuery(String value) {
+    searchQuery.value = value;
+    applyFilters();
   }
 
   bool _inPeriod(DateTime date, PeriodFilter period) {
@@ -125,6 +169,7 @@ class TransactionsController extends GetxController {
     categoryFilter.value = null;
     productFilter.value = null;
     periodFilter.value = null;
+    searchQuery.value = '';
     applyFilters();
   }
 

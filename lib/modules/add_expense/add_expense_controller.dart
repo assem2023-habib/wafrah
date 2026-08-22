@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../core/constants/app_strings.dart';
+import '../../core/utils/number_formatter.dart';
 import '../../core/utils/validators.dart';
 import '../../data/models/category.dart';
 import '../../data/models/product.dart';
@@ -36,11 +37,15 @@ class AddExpenseController extends GetxController {
   final Rx<DateTime> date = DateTime.now().obs;
   final RxString error = ''.obs;
   final RxBool saving = false.obs;
+  final RxBool isEdit = false.obs;
+
+  String? _editId;
 
   @override
   void onInit() {
     super.onInit();
-    _loadCategories();
+    _editId = Get.arguments as String?;
+    _initLoad();
   }
 
   @override
@@ -48,6 +53,41 @@ class AddExpenseController extends GetxController {
     amountCtrl.dispose();
     noteCtrl.dispose();
     super.onClose();
+  }
+
+  Future<void> _initLoad() async {
+    await _loadCategories();
+    if (_editId == null) {
+      return;
+    }
+    final tx = await _transactionRepository.getById(_editId!);
+    if (tx == null || tx.type != TransactionType.expense) {
+      _editId = null;
+      return;
+    }
+    isEdit.value = true;
+    amountCtrl.text = NumberFormatter.formatNumber(tx.amount);
+    noteCtrl.text = tx.note ?? '';
+    date.value = tx.date;
+    if (tx.categoryId != null) {
+      for (final category in categories) {
+        if (category.id == tx.categoryId) {
+          selectedCategory.value = category;
+          break;
+        }
+      }
+      if (selectedCategory.value != null) {
+        await _loadProducts(selectedCategory.value!.id);
+      }
+      if (tx.productId != null) {
+        for (final product in products) {
+          if (product.id == tx.productId) {
+            selectedProduct.value = product;
+            break;
+          }
+        }
+      }
+    }
   }
 
   Future<void> _loadCategories() async {
@@ -103,17 +143,20 @@ class AddExpenseController extends GetxController {
     final canGoBack = Get.key.currentState?.canPop() ?? false;
     saving.value = true;
     try {
-      await _transactionRepository.add(
-        Transaction(
-          id: _newId(),
-          type: TransactionType.expense,
-          amount: Validators.parseNumber(amountCtrl.text) ?? 0,
-          categoryId: selectedCategory.value!.id,
-          productId: selectedProduct.value?.id,
-          date: date.value,
-          note: noteCtrl.text.trim().isEmpty ? null : noteCtrl.text.trim(),
-        ),
+      final transaction = Transaction(
+        id: _editId ?? _newId(),
+        type: TransactionType.expense,
+        amount: Validators.parseNumber(amountCtrl.text) ?? 0,
+        categoryId: selectedCategory.value!.id,
+        productId: selectedProduct.value?.id,
+        date: date.value,
+        note: noteCtrl.text.trim().isEmpty ? null : noteCtrl.text.trim(),
       );
+      if (isEdit.value) {
+        await _transactionRepository.update(transaction);
+      } else {
+        await _transactionRepository.add(transaction);
+      }
       Get.dialog(const SuccessScreen(message: AppStrings.savedSuccess));
       await Future.delayed(const Duration(milliseconds: 1200));
       if (Get.isDialogOpen == true) {

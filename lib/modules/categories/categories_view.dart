@@ -65,10 +65,12 @@ class CategoriesView extends StatelessWidget {
                         const SizedBox(height: AppDimens.gapMd),
                       ],
                       if (controller.categories.isEmpty)
-                        const AppEmptyState(
+                        AppEmptyState(
                           icon: TablerIcons.category,
                           title: AppStrings.noCategories,
                           description: AppStrings.noCategoriesDesc,
+                          actionLabel: AppStrings.addCategory,
+                          onAction: controller.startAdd,
                         )
                       else
                         for (final category in controller.categories)

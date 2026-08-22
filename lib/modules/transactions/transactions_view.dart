@@ -14,6 +14,7 @@ import '../../widgets/app_buttons.dart';
 import '../../widgets/app_card.dart';
 import '../../widgets/app_dropdown_field.dart';
 import '../../widgets/app_empty_state.dart';
+import '../../widgets/app_text_field.dart';
 import '../../widgets/bottom_nav.dart';
 import '../../widgets/page_header.dart';
 import '../../widgets/skeleton_card.dart';
@@ -33,6 +34,7 @@ class TransactionsView extends StatelessWidget {
               padding: EdgeInsets.all(AppDimens.spacingMd),
               child: PageHeader(title: AppStrings.transactionsLog),
             ),
+            const _SearchBar(),
             _FilterBar(),
             const SizedBox(height: AppDimens.gapSm),
             Expanded(child: _Content()),
@@ -55,6 +57,42 @@ class TransactionsView extends StatelessWidget {
       case 3:
         Get.toNamed(AppRoutes.electricity);
     }
+  }
+}
+
+class _SearchBar extends StatefulWidget {
+  const _SearchBar();
+
+  @override
+  State<_SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<_SearchBar> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<TransactionsController>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
+      child: AppTextField(
+        label: '',
+        controller: _controller,
+        hint: AppStrings.searchHint,
+        prefix: const Icon(
+          TablerIcons.search,
+          size: AppDimens.iconMd,
+          color: AppColors.textSecondary,
+        ),
+        onChanged: controller.setSearchQuery,
+      ),
+    );
   }
 }
 
@@ -235,10 +273,12 @@ class _Content extends StatelessWidget {
           );
         }
         if (controller.filtered.isEmpty) {
-          return const AppEmptyState(
+          return AppEmptyState(
             icon: TablerIcons.search,
             title: AppStrings.noResults,
             description: AppStrings.noResultsDesc,
+            actionLabel: controller.hasFilters ? AppStrings.clearFilters : null,
+            onAction: controller.hasFilters ? controller.clearFilters : null,
           );
         }
         final groups = controller.groupedByDate;

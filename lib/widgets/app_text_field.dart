@@ -12,6 +12,7 @@ class AppTextField extends StatelessWidget {
     this.errorText,
     this.keyboardType,
     this.suffixText,
+    this.prefix,
     this.obscureText = false,
     this.onChanged,
   });
@@ -22,6 +23,7 @@ class AppTextField extends StatelessWidget {
   final String? errorText;
   final TextInputType? keyboardType;
   final String? suffixText;
+  final Widget? prefix;
   final bool obscureText;
   final void Function(String)? onChanged;
 
@@ -30,15 +32,17 @@ class AppTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: AppDimens.fontSizeLabel,
-            fontWeight: AppDimens.fontWeightMedium,
-            color: AppColors.textSecondary,
+        if (label.isNotEmpty) ...[
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: AppDimens.fontSizeLabel,
+              fontWeight: AppDimens.fontWeightMedium,
+              color: AppColors.textSecondary,
+            ),
           ),
-        ),
-        const SizedBox(height: AppDimens.gapSm),
+          const SizedBox(height: AppDimens.gapSm),
+        ],
         SizedBox(
           height: AppDimens.fieldHeight,
           child: TextField(
@@ -50,6 +54,7 @@ class AppTextField extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: const TextStyle(color: AppColors.textSecondary),
+              prefixIcon: prefix,
               suffixText: suffixText,
               suffixStyle: const TextStyle(color: AppColors.textSecondary),
               contentPadding:
