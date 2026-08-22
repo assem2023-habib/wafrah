@@ -31,6 +31,8 @@ class AppStrings {
   static const String product = 'المنتج';
   static const String date = 'التاريخ';
   static const String note = 'ملاحظة';
+  static const String noteHint = 'أضف ملاحظة...';
+  static const String addCategoryFirstDesc = 'أضف صنفًا أولًا من إدارة الأصناف';
   static const String save = 'حفظ';
   static const String cancel = 'إلغاء';
   static const String confirm = 'تأكيد';

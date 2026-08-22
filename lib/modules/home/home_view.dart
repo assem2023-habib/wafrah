@@ -13,6 +13,7 @@ import '../../widgets/app_card.dart';
 import '../../widgets/app_empty_state.dart';
 import '../../widgets/app_error_banner.dart';
 import '../../widgets/bottom_nav.dart';
+import '../../widgets/skeleton_card.dart';
 import '../../widgets/transaction_item.dart';
 import 'home_controller.dart';
 
@@ -26,8 +27,18 @@ class HomeView extends StatelessWidget {
         child: Column(
           children: [
             const _Header(),
-            const Expanded(child: _Content()),
-            const _SpeedDial(),
+            const Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(child: _Content()),
+                  Positioned(
+                    bottom: AppDimens.gapMd,
+                    left: AppDimens.spacingMd,
+                    child: _SpeedDial(),
+                  ),
+                ],
+              ),
+            ),
             const BottomNav(currentIndex: 0, onTap: _onNavTap),
           ],
         ),
@@ -103,7 +114,7 @@ class _Content extends StatelessWidget {
     return Obx(
       () {
         if (controller.loading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const _HomeSkeleton();
         }
         if (controller.error.isNotEmpty) {
           return Padding(
@@ -129,6 +140,37 @@ class _Content extends StatelessWidget {
   }
 }
 
+class _HomeSkeleton extends StatelessWidget {
+  const _HomeSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        AppDimens.spacingMd,
+        AppDimens.spacingMd,
+        AppDimens.spacingMd,
+        88,
+      ),
+      children: const [
+        SkeletonCard(height: 150),
+        SizedBox(height: AppDimens.gapMd),
+        Row(
+          children: [
+            Expanded(child: SkeletonCard(height: 124)),
+            SizedBox(width: AppDimens.gapSm),
+            Expanded(child: SkeletonCard(height: 124)),
+          ],
+        ),
+        SizedBox(height: AppDimens.spacingLg),
+        SkeletonCard(height: 72),
+        SizedBox(height: AppDimens.gapMd),
+        SkeletonCard(height: 72),
+      ],
+    );
+  }
+}
+
 class _HomeList extends StatelessWidget {
   const _HomeList(this.controller);
 
@@ -138,7 +180,12 @@ class _HomeList extends StatelessWidget {
   Widget build(BuildContext context) {
     final lastFive = controller.lastFive;
     return ListView(
-      padding: const EdgeInsets.all(AppDimens.spacingMd),
+      padding: const EdgeInsets.fromLTRB(
+        AppDimens.spacingMd,
+        AppDimens.spacingMd,
+        AppDimens.spacingMd,
+        88,
+      ),
       children: [
         _BalanceCard(controller),
         const SizedBox(height: AppDimens.gapMd),
@@ -196,7 +243,8 @@ class _HomeList extends StatelessWidget {
                 _StaggeredItem(
                   index: i,
                   transaction: lastFive[i],
-                  categoryName: controller.categoryNameFor(lastFive[i].categoryId),
+                  categoryName:
+                      controller.categoryNameFor(lastFive[i].categoryId),
                 ),
               ],
             ],
@@ -297,22 +345,41 @@ class _SummaryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: AppDimens.iconLg, color: color),
+            Row(
+              children: [
+                Icon(icon, size: AppDimens.iconSm, color: color),
+                const SizedBox(width: AppDimens.gapXs),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: AppDimens.fontSizeCaption,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: AppDimens.gapSm),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: AppDimens.fontSizeCaption,
-                color: AppColors.textSecondary,
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: value),
+              duration: AppDimens.durCount,
+              curve: Curves.easeOut,
+              builder: (context, animated, child) => Text(
+                NumberFormatter.formatSyp(animated),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: AppDimens.fontWeightMedium,
+                  color: color,
+                ),
               ),
             ),
             const SizedBox(height: AppDimens.gapXs),
-            Text(
-              NumberFormatter.formatSyp(value),
+            const Text(
+              AppStrings.currencyUnit,
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: AppDimens.fontWeightMedium,
-                color: color,
+                fontSize: AppDimens.fontSizeCaption,
+                color: AppColors.textSecondary,
               ),
             ),
           ],
@@ -349,6 +416,10 @@ class _StaggeredItem extends StatelessWidget {
       child: TransactionItem(
         transaction: transaction,
         categoryName: categoryName,
+        onTap: () => Get.toNamed(
+          AppRoutes.transactionDetail,
+          arguments: transaction.id,
+        ),
       ),
     );
   }
@@ -364,23 +435,33 @@ class _SpeedDial extends StatefulWidget {
 class _SpeedDialState extends State<_SpeedDial> {
   bool _open = false;
 
+  static const double _fabSize = 56;
+
+  void _close() {
+    if (_open) {
+      setState(() => _open = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 170,
+      width: _fabSize,
+      height: _fabSize,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Positioned(
-            bottom: AppDimens.gapMd,
-            left: AppDimens.spacingMd,
+            bottom: _fabSize + AppDimens.gapMd,
+            left: 0,
             child: IgnorePointer(
               ignoring: !_open,
               child: AnimatedOpacity(
                 opacity: _open ? 1 : 0,
-                duration: AppDimens.durFast,
+                duration: AppDimens.durBase,
                 child: AnimatedScale(
                   scale: _open ? 1 : 0.85,
-                  duration: AppDimens.durFast,
+                  duration: AppDimens.durBase,
                   alignment: Alignment.bottomLeft,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -390,16 +471,16 @@ class _SpeedDialState extends State<_SpeedDial> {
                         label: AppStrings.addIncome,
                         color: AppColors.primary,
                         onTap: () {
-                          setState(() => _open = false);
+                          _close();
                           Get.toNamed(AppRoutes.addIncome);
                         },
                       ),
-                      const SizedBox(height: AppDimens.gapSm),
+                      const SizedBox(height: AppDimens.gapMd),
                       _ActionPill(
                         label: AppStrings.addExpense,
                         color: AppColors.secondary,
                         onTap: () {
-                          setState(() => _open = false);
+                          _close();
                           Get.toNamed(AppRoutes.addExpense);
                         },
                       ),
@@ -409,31 +490,68 @@ class _SpeedDialState extends State<_SpeedDial> {
               ),
             ),
           ),
-          Positioned(
-            bottom: AppDimens.gapMd,
-            left: AppDimens.spacingMd,
-            child: GestureDetector(
-              onTap: () => setState(() => _open = !_open),
+          _PressableScale(
+            onTap: () => setState(() => _open = !_open),
+            child: AnimatedContainer(
+              width: _fabSize,
+              height: _fabSize,
+              duration: AppDimens.durFast,
+              decoration: BoxDecoration(
+                color: _open ? AppColors.textPrimary : AppColors.primary,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.18),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
               child: AnimatedRotation(
                 turns: _open ? 0.125 : 0,
                 duration: AppDimens.durBase,
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    TablerIcons.plus,
-                    size: 26,
-                    color: AppColors.onPrimary,
-                  ),
+                alignment: Alignment.center,
+                child: Icon(
+                  TablerIcons.plus,
+                  size: 26,
+                  color: _open ? AppColors.background : AppColors.onPrimary,
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PressableScale extends StatefulWidget {
+  const _PressableScale({required this.child, this.onTap});
+
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<_PressableScale> createState() => _PressableScaleState();
+}
+
+class _PressableScaleState extends State<_PressableScale> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (_) => setState(() => _pressed = true),
+      onPointerUp: (_) => setState(() => _pressed = false),
+      onPointerCancel: (_) => setState(() => _pressed = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: _pressed ? 0.9 : 1,
+          duration: AppDimens.durFast,
+          curve: Curves.easeOut,
+          child: widget.child,
+        ),
       ),
     );
   }
@@ -452,24 +570,43 @@ class _ActionPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final isIncome = label == AppStrings.addIncome;
+    return _PressableScale(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimens.spacingMd,
-          vertical: AppDimens.gapSm,
+          vertical: AppDimens.gapSm + 2,
         ),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: AppDimens.fontSizeLabel,
-            fontWeight: AppDimens.fontWeightMedium,
-            color: AppColors.onPrimary,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isIncome ? TablerIcons.trending_up : TablerIcons.trending_down,
+              size: 15,
+              color: AppColors.onPrimary,
+            ),
+            const SizedBox(width: AppDimens.gapXs),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: AppDimens.fontSizeLabel,
+                fontWeight: AppDimens.fontWeightMedium,
+                color: AppColors.onPrimary,
+              ),
+            ),
+          ],
         ),
       ),
     );

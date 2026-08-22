@@ -42,37 +42,40 @@ class AppDropdownField<T> extends StatelessWidget {
               ),
             ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final item in items)
-                ListTile(
-                  onTap: () => Navigator.of(sheetContext).pop(item),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-                  ),
-                  tileColor: item == selected ? AppColors.muted : null,
-                  title: Text(
-                    display(item),
-                    style: TextStyle(
-                      fontSize: AppDimens.fontSizeBody,
-                      fontWeight: item == selected
-                          ? AppDimens.fontWeightMedium
-                          : AppDimens.fontWeightNormal,
-                      color: item == selected
-                          ? AppColors.primary
-                          : AppColors.textPrimary,
+          child: Material(
+            type: MaterialType.transparency,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final item in items)
+                  ListTile(
+                    onTap: () => Navigator.of(sheetContext).pop(item),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppDimens.radiusMd),
                     ),
+                    tileColor: item == selected ? AppColors.muted : null,
+                    title: Text(
+                      display(item),
+                      style: TextStyle(
+                        fontSize: AppDimens.fontSizeBody,
+                        fontWeight: item == selected
+                            ? AppDimens.fontWeightMedium
+                            : AppDimens.fontWeightNormal,
+                        color: item == selected
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                    trailing: item == selected
+                        ? const Icon(
+                            TablerIcons.check,
+                            size: AppDimens.iconMd,
+                            color: AppColors.primary,
+                          )
+                        : null,
                   ),
-                  trailing: item == selected
-                      ? const Icon(
-                          TablerIcons.check,
-                          size: AppDimens.iconMd,
-                          color: AppColors.primary,
-                        )
-                      : null,
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

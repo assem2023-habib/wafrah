@@ -33,13 +33,23 @@ class AddIncomeView extends StatelessWidget {
                 () => ListView(
                   padding: const EdgeInsets.all(AppDimens.spacingMd),
                   children: [
+                    if (controller.error.isNotEmpty &&
+                        controller.error.value !=
+                            AppStrings.amountPositive) ...[
+                      AppErrorBanner(
+                        message: controller.error.value,
+                        onClose: controller.clearError,
+                      ),
+                      const SizedBox(height: AppDimens.gapMd),
+                    ],
                     AppNumberField(
                       label: AppStrings.amount,
                       controller: controller.amountCtrl,
                       suffix: AppStrings.currencyUnit,
-                      errorText: controller.error.value == AppStrings.amountPositive
-                          ? controller.error.value
-                          : null,
+                      errorText:
+                          controller.error.value == AppStrings.amountPositive
+                              ? controller.error.value
+                              : null,
                       onChanged: (_) => controller.clearError(),
                     ),
                     const SizedBox(height: AppDimens.gapMd),
@@ -52,14 +62,8 @@ class AddIncomeView extends StatelessWidget {
                     AppTextField(
                       label: AppStrings.note,
                       controller: controller.noteCtrl,
+                      hint: AppStrings.noteHint,
                     ),
-                    if (controller.error.isNotEmpty) ...[
-                      const SizedBox(height: AppDimens.gapMd),
-                      AppErrorBanner(
-                        message: controller.error.value,
-                        onClose: controller.clearError,
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -70,10 +74,12 @@ class AddIncomeView extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppDimens.spacingMd),
-          child: AppPrimaryButton(
-            variant: 'primary',
-            label: AppStrings.saveIncome,
-            onPressed: controller.save,
+          child: Obx(
+            () => AppPrimaryButton(
+              variant: 'primary',
+              label: AppStrings.saveIncome,
+              onPressed: controller.saving.value ? null : controller.save,
+            ),
           ),
         ),
       ),

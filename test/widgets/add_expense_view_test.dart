@@ -145,6 +145,33 @@ void main() {
     expect(find.text(AppStrings.saveExpense), findsOneWidget);
     expect(find.text(AppStrings.category), findsOneWidget);
     expect(find.text(AppStrings.amount), findsOneWidget);
+  });
+
+  testWidgets('shows product dropdown only after choosing a category '
+      'that has products', (tester) async {
+    final controller = AddExpenseController(
+      categoryRepository: FakeCategoryRepository([food]),
+      productRepository: FakeProductRepository([
+        const Product(id: 'p1', name: 'خبز', categoryId: 'c1'),
+      ]),
+      transactionRepository: FakeTransactionRepository(const []),
+    );
+    Get.put(controller);
+    await tester.pumpWidget(
+      GetMaterialApp(
+        locale: const Locale('ar'),
+        home: const AddExpenseView(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.noProduct), findsNothing);
+
+    await tester.tap(find.text(AppStrings.categoryRequired));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('طعام وشراب'));
+    await tester.pumpAndSettle();
+
     expect(find.text(AppStrings.noProduct), findsOneWidget);
   });
 }

@@ -1,10 +1,12 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/transaction.dart';
 import '../../data/repositories/interfaces/category_repository_interface.dart';
 import '../../data/repositories/interfaces/transaction_repository_interface.dart';
+import '../../routes/app_pages.dart' show AppPages;
 
-class HomeController extends GetxController {
+class HomeController extends GetxController with RouteAware {
   HomeController({
     required ITransactionRepository transactionRepository,
     required ICategoryRepository categoryRepository,
@@ -26,22 +28,51 @@ class HomeController extends GetxController {
     load();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    final context = Get.key.currentContext;
+    if (context == null) {
+      return;
+    }
+    final route = ModalRoute.of(context);
+    if (route != null && route is PageRoute) {
+      AppPages.appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void onClose() {
+    AppPages.appRouteObserver.unsubscribe(this);
+    super.onClose();
+  }
+
+  @override
+  void didPopNext() {
+    load();
+  }
+
   Future<void> load() async {
     loading.value = true;
-    final items = await _transactionRepository.getAll();
-    transactions.assignAll(items);
-    final categoryIds =
-        items.map((t) => t.categoryId).whereType<String>().toSet();
-    for (final id in categoryIds) {
-      if (_categoryNames.containsKey(id)) {
-        continue;
+    try {
+      final items = await _transactionRepository.getAll();
+      transactions.assignAll(items);
+      final categoryIds =
+          items.map((t) => t.categoryId).whereType<String>().toSet();
+      for (final id in categoryIds) {
+        if (_categoryNames.containsKey(id)) {
+          continue;
+        }
+        final category = await _categoryRepository.getById(id);
+        if (category != null) {
+          _categoryNames[id] = category.name;
+        }
       }
-      final category = await _categoryRepository.getById(id);
-      if (category != null) {
-        _categoryNames[id] = category.name;
-      }
+    } catch (_) {
+      error.value = 'تعذر تحميل البيانات، حاول مجددًا';
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   double get totalIncome => transactions
