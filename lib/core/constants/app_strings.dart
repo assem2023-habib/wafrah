@@ -44,6 +44,11 @@ class AppStrings {
   static const String updateExpense = 'تحديث المصروف';
   static const String saveIncome = 'حفظ الدخل';
   static const String updateIncome = 'تحديث الدخل';
+  static const String saveReading = 'حفظ القراءة';
+  static const String clearEndDate = 'بدون تاريخ نهاية';
+  static const String optional = 'اختياري';
+  static const String loadFailed = 'تعذر تحميل البيانات، حاول مجددًا';
+  static const String deleteFailed = 'تعذر حذف القراءة، حاول مجددًا';
   static const String noProduct = 'بدون منتج محدد';
   static const String allProducts = 'كل المنتجات';
   static const String chooseDate = 'اختر التاريخ';

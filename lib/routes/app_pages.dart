@@ -6,6 +6,8 @@ import '../modules/add_expense/add_expense_binding.dart';
 import '../modules/add_expense/add_expense_view.dart';
 import '../modules/add_income/add_income_binding.dart';
 import '../modules/add_income/add_income_view.dart';
+import '../modules/add_reading/add_reading_binding.dart';
+import '../modules/add_reading/add_reading_view.dart';
 import '../modules/categories/categories_binding.dart';
 import '../modules/categories/categories_view.dart';
 import '../modules/electricity_home/electricity_home_binding.dart';
@@ -14,6 +16,8 @@ import '../modules/home/home_binding.dart';
 import '../modules/home/home_view.dart';
 import '../modules/products/products_binding.dart';
 import '../modules/products/products_view.dart';
+import '../modules/reading_log/reading_log_binding.dart';
+import '../modules/reading_log/reading_log_view.dart';
 import '../modules/settings/settings_binding.dart';
 import '../modules/settings/settings_view.dart';
 import '../modules/splash/splash_binding.dart';
@@ -80,6 +84,16 @@ class AppPages {
       name: AppRoutes.electricity,
       page: () => const ElectricityHomeView(),
       binding: ElectricityHomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.addReading,
+      page: () => const AddReadingView(),
+      binding: AddReadingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.readingLog,
+      page: () => const ReadingLogView(),
+      binding: ReadingLogBinding(),
     ),
     GetPage(
       name: AppRoutes.settings,

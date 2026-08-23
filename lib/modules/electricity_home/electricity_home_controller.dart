@@ -1,11 +1,16 @@
 import 'dart:math';
 
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../core/constants/app_defaults.dart';
+import '../../core/utils/tariff_calculator.dart';
 import '../../data/models/electricity_reading.dart';
+import '../../data/models/electricity_settings.dart';
 import '../../data/repositories/interfaces/electricity_repository_interface.dart';
-class ElectricityHomeController extends GetxController {
+import '../../routes/app_pages.dart' show AppPages;
+
+class ElectricityHomeController extends GetxController with RouteAware {
   ElectricityHomeController({
     required IElectricityRepository electricityRepository,
   }) : _electricityRepository = electricityRepository;
@@ -19,11 +24,35 @@ class ElectricityHomeController extends GetxController {
   final RxDouble cycleProgress = 0.0.obs;
   final RxBool warning = false.obs;
 
-  List<(double, double)> _tiers = const [];
+  List<ElectricityTier> _tiers = const [];
 
   @override
   void onInit() {
     super.onInit();
+    load();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    final context = Get.key.currentContext;
+    if (context == null) {
+      return;
+    }
+    final route = ModalRoute.of(context);
+    if (route != null && route is PageRoute) {
+      AppPages.appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void onClose() {
+    AppPages.appRouteObserver.unsubscribe(this);
+    super.onClose();
+  }
+
+  @override
+  void didPopNext() {
     load();
   }
 
@@ -35,9 +64,7 @@ class ElectricityHomeController extends GetxController {
       final sorted = [...items]
         ..sort((a, b) => a.fromDate.compareTo(b.fromDate));
       readings.assignAll(sorted);
-      _tiers = [
-        for (final tier in settings.tiers) (tier.limit, tier.price),
-      ];
+      _tiers = settings.tiers;
       _compute();
     } finally {
       loading.value = false;
@@ -56,7 +83,8 @@ class ElectricityHomeController extends GetxController {
     final previous = readings[readings.length - 2];
     final used = max(latest.kwhValue - previous.kwhValue, 0.0);
     consumption.value = used;
-    estimatedCost.value = _tieredCost(used, _tiers);
+    estimatedCost.value =
+        TariffCalculator.costOfConsumption(used, _tiers);
     cycleProgress.value = (used / AppDefaults.maxConsumption).clamp(0.0, 1.0);
     warning.value =
         used > AppDefaults.maxConsumption * AppDefaults.warningThreshold;
@@ -77,17 +105,4 @@ class ElectricityHomeController extends GetxController {
   bool get showGauge => readings.isNotEmpty;
 
   bool get showComparison => readings.length >= 3;
-
-  double _tieredCost(double usedKwh, List<(double, double)> tiers) {
-    var cost = 0.0;
-    var previousLimit = 0.0;
-    for (final (limit, price) in tiers) {
-      if (usedKwh > previousLimit) {
-        final inTier = min(usedKwh, limit) - previousLimit;
-        cost += inTier * price;
-      }
-      previousLimit = limit;
-    }
-    return cost;
-  }
 }
