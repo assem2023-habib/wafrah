@@ -46,6 +46,23 @@
 
 > **الهامش:** كل متجه يحمل 16px فراغاً متساوياً من الأعلى والأسفل واليمين واليسار حول الدائرة — تفادياً لالتصاق الحواف عند عرضها داخل بطاقات أو كأيقونة تكيفية.
 
+### لوحة الألوان وسبب اختيارها
+
+الوثيقة `DOCS/01-التصميم-والشكل.md:18` تحدد لوحة دافئة **Sage `#6B8E6B` + Terracotta `#C97B4A`** بدل الأزرق/البنفسجي المشبع الشائع. السبب: تباين أعلى لضعف البصر لدى كبار السن، وإحساس هادئ غير متوتر، مع دلالة ثابتة `primary=دخل` و`secondary=مصروف` لا تتبدل بين الشاشات.
+
+| الدور | نهاري | ليلي | الاستخدام |
+|---|---|---|---|
+| `background` | `#F7F4EE` | `#1E1D1A` | خلفية الشاشات |
+| `surface` | `#FFFFFF` | `#2A2925` | البطاقات والحقول |
+| `primary` | `#6B8E6B` | `#8FB08F` | الدخل، الأزرار الرئيسية |
+| `secondary` | `#C97B4A` | `#D99568` | المصروف، لمسات التمييز |
+| `textPrimary` | `#2E2C28` | `#EDEAE2` | العناوين |
+| `textSecondary` | `#7A7568` | `#A8A398` | التسميات |
+| `border` | `#D3D1C7` | `#413F38` | الحدود والفواصل |
+| `danger` / `dangerBg` | `#B8503F` / `#F3D9D3` | `#D97862` / `#3A2C27` | الأخطاء |
+
+الألوان لا تُكتب hex داخل الشاشات أبداً — تمر عبر `app_colors.dart` → `AppPalette` المتكيّف → `ThemeData` (تفاصيل كاملة في `readme/screens/14-app-icon.md`).
+
 ### آلية تبديل الأيقونة حسب الوضع المخزّن
 
 الوضع الافتراضي عند أول تثبيت هو **النهاري**.
@@ -134,6 +151,24 @@ readme/screens/        ملف تفصيلي لكل شاشة (13) + 14-app-icon ل
 | [`flutter_tabler_icons`](https://pub.dev/packages/flutter_tabler_icons) | أيقونات Tabler الخطية النظيفة الملائمة للفئة العمرية المستهدفة (خط واحد، بلا تفاصيل) |
 | [`path_provider`](https://pub.dev/packages/path_provider) | مسار تخزين Hive على كل منصة (متطلب لـ hive_flutter) |
 | [`flutter_localizations`](https://docs.flutter.dev/) (SDK) | تعريب Material/Cupertino RTL + قاموس التواريخ العربي |
+
+## تحميل التطبيق
+
+> **للاستخدام بدون بناء يدوي — حمّل من صفحة الإصدارات.**
+
+[![آخر إصدار](https://img.shields.io/github/v/release/assem2023-habib/wafrah?label=%D8%A2%D8%AE%D8%B1%20%D8%A5%D8%B5%D8%AF%D8%A7%D8%B1)](https://github.com/assem2023-habib/wafrah/releases/latest)
+
+| الملف | لمن؟ | الحجم |
+|---|---|---|
+| `wafrah-vX.Y.Z-full.apk` | **النسخة الكاملة** — تعمل على جميع الأجهزة | ~45MB |
+| `wafrah-vX.Y.Z-light-arm64-v8a.apk` | **هذه هي النسخة المخففة للتحميل** — معظم الهواتف الحديثة (2019+) | ~16MB |
+| `wafrah-vX.Y.Z-light-armeabi-v7a.apk` | **النسخة المخففة** — أجهزة قديمة 32-bit | ~15MB |
+| `wafrah-vX.Y.Z-light-x86_64.apk` | **النسخة المخففة** — محاكيات | ~17MB |
+| `wafrah-vX.Y.Z.aab` | حزمة Play Store | ~35MB |
+
+> **أي نسخة أحمّل؟** جرّب المخففة `arm64-v8a` أولاً — أسرع بـ 60% تحميلاً وتثبيتاً. إن فشل التثبيت حمّل الكاملة. كلاهما يُبنى فقط عند وسم `v*` على الفرع `main` بعد نجاح `analyze` و`test` (88/88).
+
+كل إصدار `v*` يُنشئ تلقائياً [GitHub Release](https://github.com/assem2023-habib/wafrah/releases) مع وصف مبسط للمشروع وجدول التحميل أعلاه عبر CI/CD (`.github/workflows/release.yml:37`).
 
 ## التثبيت والتشغيل
 

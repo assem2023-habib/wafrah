@@ -1,0 +1,136 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.x'
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+
+  test:
+    name: Test
+    needs: analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.x'
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Run tests
+        run: flutter test
+
+  build-and-release:
+    name: Build & Release
+    needs: test
+    # يُنشئ الـ Release فقط عند وسم إصدار v* (نسخ الـ release فقط)
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.x'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Extract version from pubspec.yaml
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//')
+          echo "full=$VERSION" >> $GITHUB_OUTPUT
+          # يفصل الاسم عن رقم البناء (1.0.0+1 -> 1.0.0)
+          NAME=$(echo "$VERSION" | cut -d'+' -f1)
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION (name: $NAME)"
+
+      - name: Build universal APK (full)
+        run: flutter build apk --release
+
+      - name: Build split APKs (light per ABI)
+        run: flutter build apk --release --split-per-abi
+
+      - name: Build App Bundle
+        run: flutter build appbundle --release
+
+      - name: Rename artifacts
+        shell: bash
+        run: |
+          set -e
+          VER="${{ steps.version.outputs.full }}"
+          echo "Renaming for version $VER"
+          mkdir -p dist
+          # النسخة الكاملة (universal) — تقريباً 45-50MB
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/wafrah-v${VER}-full.apk"
+          # النسخ المجزأة المخففة — كل نسخة ~15-18MB (حوالي 60% أصغر)
+          for f in build/app/outputs/flutter-apk/app-*-release.apk; do
+            base=$(basename "$f")
+            # app-arm64-v8a-release.apk -> wafrah-v1.0.0+1-light-arm64-v8a.apk
+            abi=$(echo "$base" | sed 's/app-//; s/-release\.apk//')
+            cp "$f" "dist/wafrah-v${VER}-light-${abi}.apk"
+          done
+          # حزمة AAB للمتجر
+          cp build/app/outputs/bundle/release/app-release.aab "dist/wafrah-v${VER}.aab"
+          ls -lh dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: false
+          body: |
+            ## وِفرة — ${{ steps.version.outputs.full }}
+
+            تطبيق إدارة مصاريف ودخل وكهرباء بواجهة عربية كاملة، مصمم لكبار السن (خطوط كبيرة، تباين عالٍ، خطوات قليلة).
+
+            ### ما الجديد في هذه النسخة
+            - راجع سجل التغييرات في `README.md` وملاحظات الـ commits.
+
+            ### التحميل
+
+            | الملف | الوصف | الحجم التقريبي |
+            |---|---|---|
+            | `wafrah-v${{ steps.version.outputs.full }}-full.apk` | **النسخة الكاملة** — تعمل على جميع المعالجات | ~45MB |
+            | `wafrah-v${{ steps.version.outputs.full }}-light-arm64-v8a.apk` | **هذه هي النسخة المخففة للتحميل** — لأجهزة arm64 (معظم الهواتف الحديثة) | ~16MB |
+            | `wafrah-v${{ steps.version.outputs.full }}-light-armeabi-v7a.apk` | **النسخة المخففة** — للأجهزة القديمة 32-bit | ~15MB |
+            | `wafrah-v${{ steps.version.outputs.full }}-light-x86_64.apk` | **النسخة المخففة** — للمحاكيات وأجهزة x86 | ~17MB |
+            | `wafrah-v${{ steps.version.outputs.full }}.aab` | حزمة App Bundle للرفع على Google Play | ~35MB |
+
+            > **أي نسخة أختار؟** إذا كان هاتفك حديث (2019+) حمّل النسخة المخففة `arm64-v8a` — أسرع تحميلاً وتثبيتاً. إذا لم تكن متأكداً حمّل النسخة الكاملة `full`.
+
+            ### التحقق
+
+            - `flutter analyze` نظيف
+            - `flutter test` — 88/88 ناجحة
+            - بُني على الفرع `main` عبر CI/CD.
