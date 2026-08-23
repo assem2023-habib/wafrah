@@ -1,7 +1,7 @@
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img">
+<svg viewBox="0 0 152 152" xmlns="http://www.w3.org/2000/svg" role="img">
 <title>شعار وفرة - الوضع الليلي</title>
-<circle cx="60" cy="60" r="60" fill="#1E1D1A"/>
-<g transform="translate(60,60)">
+<circle cx="76" cy="76" r="60" fill="#1E1D1A"/>
+<g transform="translate(76,76)">
   <rect x="-28" y="-19" width="56" height="40" rx="7" fill="none" stroke="#EDEAE2" stroke-width="3"/>
   <path d="M -28 -7 L 28 -7" stroke="#EDEAE2" stroke-width="3" fill="none"/>
   <circle cx="17" cy="7" r="6" fill="#D99568"/>
