@@ -358,42 +358,139 @@ class _AboutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Get.isDarkMode;
     return AppCard(
       child: Column(
         children: [
-          Icon(
-            TablerIcons.wallet,
-            size: AppDimens.iconXl,
-            color: context.primary,
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: context.border, width: 1),
+              color: context.surface,
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(
+              isDark ? 'assets/wifra_icon_dark.png' : 'assets/wifra_icon.png',
+              fit: BoxFit.cover,
+            ),
           ),
-          const SizedBox(height: AppDimens.gapSm),
+          const SizedBox(height: AppDimens.gapMd),
           Text(
             AppStrings.appName,
             style: TextStyle(
-              fontSize: AppDimens.fontSizeBody,
+              fontSize: AppDimens.fontSizeHeading,
               fontWeight: AppDimens.fontWeightMedium,
               color: context.textPrimary,
             ),
           ),
           const SizedBox(height: AppDimens.gapXs),
-          Text(
-            AppStrings.version,
-            style: TextStyle(
-              fontSize: AppDimens.fontSizeCaption,
-              color: context.textSecondary,
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimens.spacingMd,
+              vertical: AppDimens.gapXs,
+            ),
+            decoration: BoxDecoration(
+              color: context.muted,
+              borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+            ),
+            child: Text(
+              AppStrings.version,
+              style: TextStyle(
+                fontSize: AppDimens.fontSizeCaption,
+                fontWeight: AppDimens.fontWeightMedium,
+                color: context.textSecondary,
+              ),
             ),
           ),
-          const SizedBox(height: AppDimens.gapXs),
+          const SizedBox(height: AppDimens.gapSm),
           Text(
             AppStrings.appFooter,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: AppDimens.fontSizeCaption,
               color: context.textSecondary,
+              height: AppDimens.lineHeight,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppDimens.gapMd),
+            child: Divider(height: 1, thickness: 1, color: context.border),
+          ),
+          _AboutRow(
+            icon: TablerIcons.brand_github,
+            label: 'GitHub',
+            value: 'github.com/assem2023-habib/wafrah',
+          ),
+          const SizedBox(height: AppDimens.gapSm),
+          _AboutRow(
+            icon: TablerIcons.heart,
+            label: 'صُنع بـ',
+            value: 'Flutter & Hive',
+          ),
+          const SizedBox(height: AppDimens.gapSm),
+          Text(
+            '© 2026 وِفرة — جميع الحقوق محفوظة',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: AppDimens.fontSizeCaption - 1,
+              color: context.textSecondary.withValues(alpha: 0.7),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AboutRow extends StatelessWidget {
+  const _AboutRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: context.muted,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 16, color: context.textSecondary),
+        ),
+        const SizedBox(width: AppDimens.gapSm),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: AppDimens.fontSizeCaption,
+            color: context.textSecondary,
+          ),
+        ),
+        const Spacer(),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.left,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: AppDimens.fontSizeCaption,
+              fontWeight: AppDimens.fontWeightMedium,
+              color: context.textPrimary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

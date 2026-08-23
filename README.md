@@ -1,8 +1,28 @@
 # وِفرة (Wafrah)
 
+<p align="center">
+  <img src="assets/wifra_icon.png" width="120" alt="شعار وفرة">
+</p>
+
+<p align="center">
+  <a href="https://github.com/assem2023-habib/wafrah/releases/latest"><img src="https://img.shields.io/github/v/release/assem2023-habib/wafrah?label=%D8%A2%D8%AE%D8%B1%20%D8%A5%D8%B5%D8%AF%D8%A7%D8%B1&color=6B8E6B" alt="آخر إصدار"></a>
+  <a href="https://github.com/assem2023-habib/wafrah/actions/workflows/release.yml"><img src="https://github.com/assem2023-habib/wafrah/actions/workflows/release.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/tests-88%2F88-success?color=6B8E6B" alt="tests">
+  <img src="https://img.shields.io/badge/Flutter-3.44-blue" alt="Flutter">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="license">
+  <img src="https://img.shields.io/badge/RTL-%D8%B9%D8%B1%D8%A8%D9%8A-orange" alt="RTL">
+</p>
+
 > مصاريفك ودخلك بكل بساطة — تطبيق موبايل لإدارة المصاريف والدخل والكهرباء، مصمّم خصيصاً **لكبار السن**: خطوط كبيرة، تباين قوي، خطوات قليلة، وبلا ازدحام بصري.
 
 تطبيق Flutter بواجهة عربية كاملة (RTL) يعمل على Android وiOS، يخزّن البيانات محلياً على الجهاز بلا حساب ولا إنترنت.
+
+<p align="center">
+  <a href="#تحميل-التطبيق"><strong>⬇️ حمّل التطبيق</strong></a> •
+  <a href="#الهوية-البصرية-وأيقونة-التطبيق-الديناميكية">الهوية البصرية</a> •
+  <a href="#خريطة-الشاشات--التوثيق-التفصيلي">الشاشات</a> •
+  <a href="https://github.com/assem2023-habib/wafrah/issues">الاقتراحات</a>
+</p>
 
 ---
 
