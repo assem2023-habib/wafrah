@@ -72,6 +72,7 @@ flutter:
   assets:
     - assets/wifra_logo.svg
     - assets/wifra_logo.png
+    - assets/wifra_icon.png
 
   fonts:
     - family: Cairo
