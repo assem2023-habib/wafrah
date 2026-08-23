@@ -12,6 +12,8 @@ import '../modules/home/home_binding.dart';
 import '../modules/home/home_view.dart';
 import '../modules/products/products_binding.dart';
 import '../modules/products/products_view.dart';
+import '../modules/settings/settings_binding.dart';
+import '../modules/settings/settings_view.dart';
 import '../modules/splash/splash_binding.dart';
 import '../modules/splash/splash_view.dart';
 import '../modules/transaction_detail/transaction_detail_binding.dart';
@@ -78,7 +80,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.settings,
-      page: () => const ComingSoonView(title: AppStrings.settingsTitle),
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
     ),
   ];
 }

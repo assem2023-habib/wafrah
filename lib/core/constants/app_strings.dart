@@ -121,6 +121,10 @@ class AppStrings {
   static const String tierLimit = 'حد الشريحة (ك.و)';
   static const String tierPrice = 'سعر الك.و (ل.س)';
   static const String addTier = 'إضافة شريحة';
+  static const String tier = 'شريحة';
+  static const String cycleRequired = 'أدخل مدة الدورة';
+  static const String tierValuesRequired = 'أكمل قيم الشرائح (أكبر من صفر)';
+  static const String tiersAscending = 'حد كل شريحة يجب أن يكون أكبر من الشريحة السابقة';
 
   static const String appFooter = 'وِفرة — مصاريفك ودخلك بكل بساطة';
 
