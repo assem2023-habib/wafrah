@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../core/constants/app_strings.dart';
 import '../modules/add_expense/add_expense_binding.dart';
 import '../modules/add_expense/add_expense_view.dart';
 import '../modules/add_income/add_income_binding.dart';
@@ -20,13 +19,14 @@ import '../modules/reading_log/reading_log_binding.dart';
 import '../modules/reading_log/reading_log_view.dart';
 import '../modules/settings/settings_binding.dart';
 import '../modules/settings/settings_view.dart';
+import '../modules/statistics/statistics_binding.dart';
+import '../modules/statistics/statistics_view.dart';
 import '../modules/splash/splash_binding.dart';
 import '../modules/splash/splash_view.dart';
 import '../modules/transaction_detail/transaction_detail_binding.dart';
 import '../modules/transaction_detail/transaction_detail_view.dart';
 import '../modules/transactions/transactions_binding.dart';
 import '../modules/transactions/transactions_view.dart';
-import '../widgets/coming_soon_view.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -78,7 +78,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.statistics,
-      page: () => const ComingSoonView(title: AppStrings.statistics),
+      page: () => const StatisticsView(),
+      binding: StatisticsBinding(),
     ),
     GetPage(
       name: AppRoutes.electricity,
