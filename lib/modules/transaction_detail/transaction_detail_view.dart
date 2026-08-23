@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimens.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/utils/number_formatter.dart';
 import '../../data/models/transaction.dart';
@@ -88,12 +88,12 @@ class _ConfirmDeleteSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
+        Text(
           AppStrings.deleteConfirm,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: AppDimens.fontSizeLabel,
-            color: AppColors.textSecondary,
+            color: context.textSecondary,
           ),
         ),
         const SizedBox(height: AppDimens.gapSm),
@@ -128,7 +128,7 @@ class _HeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == TransactionType.income;
-    final color = isIncome ? AppColors.primary : AppColors.secondary;
+    final color = isIncome ? context.primary : context.secondary;
     final icon = isIncome ? TablerIcons.arrow_up : TablerIcons.arrow_down;
     final badge = isIncome
         ? AppStrings.incomeBadge
@@ -200,19 +200,19 @@ class _DetailsCard extends StatelessWidget {
             value: controller.categoryName.value,
           ),
           if (controller.productName.value.isNotEmpty) ...[
-            const Divider(height: 1, thickness: 1, color: AppColors.border),
+            Divider(height: 1, thickness: 1, color: context.border),
             _DetailRow(
               label: AppStrings.product,
               value: controller.productName.value,
             ),
           ],
-          const Divider(height: 1, thickness: 1, color: AppColors.border),
+          Divider(height: 1, thickness: 1, color: context.border),
           _DetailRow(
             label: AppStrings.date,
             value: NumberFormatter.formatFullDate(tx.date),
           ),
           if (tx.note != null && tx.note!.isNotEmpty) ...[
-            const Divider(height: 1, thickness: 1, color: AppColors.border),
+            Divider(height: 1, thickness: 1, color: context.border),
             _DetailRow(label: AppStrings.note, value: tx.note!),
           ],
         ],
@@ -238,9 +238,9 @@ class _DetailRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppDimens.fontSizeLabel,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
           const Spacer(),
@@ -248,10 +248,10 @@ class _DetailRow extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.left,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppDimens.fontSizeBody,
                 fontWeight: AppDimens.fontWeightMedium,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
           ),

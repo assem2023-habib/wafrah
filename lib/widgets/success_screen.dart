@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key, required this.message});
@@ -24,14 +24,14 @@ class SuccessScreen extends StatelessWidget {
             child: Container(
               width: 80,
               height: 80,
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
+              decoration: BoxDecoration(
+                color: context.primary,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 TablerIcons.check,
                 size: AppDimens.iconXl,
-                color: AppColors.onPrimary,
+                color: context.onPrimary,
               ),
             ),
           ),
@@ -39,10 +39,10 @@ class SuccessScreen extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: AppDimens.fontWeightMedium,
-              color: AppColors.textPrimary,
+              color: context.textPrimary,
             ),
           ),
         ],

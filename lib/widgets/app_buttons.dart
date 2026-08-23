@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 
 class AppPrimaryButton extends StatelessWidget {
   const AppPrimaryButton({
@@ -19,10 +19,10 @@ class AppPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (background, foreground) = switch (variant) {
-      'secondary' => (AppColors.secondary, AppColors.onSecondary),
-      'danger' => (AppColors.danger, AppColors.onPrimary),
-      _ => (AppColors.primary, AppColors.onPrimary),
+    final (Color background, Color foreground) = switch (variant) {
+      'secondary' => (context.secondary, context.onSecondary),
+      'danger' => (context.danger, context.onPrimary),
+      _ => (context.primary, context.onPrimary),
     };
 
     return FilledButton(
@@ -70,8 +70,8 @@ class AppSecondaryButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.primary,
-        side: const BorderSide(color: AppColors.primary),
+        foregroundColor: context.primary,
+        side: BorderSide(color: context.primary),
         minimumSize: const Size.fromHeight(AppDimens.buttonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimens.radiusMd),
@@ -114,10 +114,10 @@ class AppIconButton extends StatelessWidget {
       tooltip: tooltip,
       style: IconButton.styleFrom(
         fixedSize: const Size(AppDimens.iconButton, AppDimens.iconButton),
-        backgroundColor: AppColors.surface,
-        side: const BorderSide(color: AppColors.border),
+        backgroundColor: context.surface,
+        side: BorderSide(color: context.border),
       ),
-      icon: Icon(icon, size: AppDimens.iconMd, color: AppColors.textPrimary),
+      icon: Icon(icon, size: AppDimens.iconMd, color: context.textPrimary),
     );
   }
 }

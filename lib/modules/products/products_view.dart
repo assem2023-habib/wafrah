@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimens.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
 import '../../data/models/category.dart';
 import '../../data/models/product.dart';
@@ -38,8 +38,8 @@ class ProductsView extends StatelessWidget {
                       AppDimens.iconButton,
                       AppDimens.iconButton,
                     ),
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.onPrimary,
+                    backgroundColor: context.primary,
+                    foregroundColor: context.onPrimary,
                   ),
                   icon: const Icon(
                     TablerIcons.plus,
@@ -137,9 +137,9 @@ class _ProductForm extends StatelessWidget {
                   const SizedBox(height: AppDimens.gapXs),
                   Text(
                     controller.categoryError.value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppDimens.fontSizeCaption,
-                      color: AppColors.danger,
+                      color: context.danger,
                     ),
                   ),
                 ],
@@ -185,24 +185,24 @@ class _ProductGroup extends StatelessWidget {
               Container(
                 width: AppDimens.iconXl,
                 height: AppDimens.iconXl,
-                decoration: const BoxDecoration(
-                  color: AppColors.muted,
+                decoration: BoxDecoration(
+                  color: context.muted,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   ProductsController.categoryIconFor(category.iconCode),
                   size: AppDimens.iconMd,
-                  color: AppColors.onMuted,
+                  color: context.onMuted,
                 ),
               ),
               const SizedBox(width: AppDimens.gapMd),
               Expanded(
                 child: Text(
                   category.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDimens.fontSizeBody,
                     fontWeight: AppDimens.fontWeightMedium,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
               ),
@@ -216,10 +216,10 @@ class _ProductGroup extends StatelessWidget {
             children: [
               for (var i = 0; i < products.length; i++) ...[
                 if (i > 0)
-                  const Divider(
+                  Divider(
                     height: 1,
                     thickness: 1,
-                    color: AppColors.border,
+                    color: context.border,
                   ),
                 _ProductRow(product: products[i], controller: controller),
               ],
@@ -251,10 +251,10 @@ class _ProductRow extends StatelessWidget {
               product.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppDimens.fontSizeBody,
                 fontWeight: AppDimens.fontWeightMedium,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
           ),

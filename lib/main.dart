@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_service.dart';
 import 'data/hive_service.dart';
 import 'data/repositories/repository_bindings.dart';
 import 'routes/app_pages.dart';
@@ -12,12 +13,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveService.init();
   await HiveService.seedIfNeeded();
+  await ThemeService.init();
   RepositoryBindings.init();
-  runApp(const WafrahApp());
+  runApp(WafrahApp(initialThemeMode: ThemeService.load()));
 }
 
 class WafrahApp extends StatelessWidget {
-  const WafrahApp({super.key});
+  const WafrahApp({super.key, required this.initialThemeMode});
+
+  final ThemeMode initialThemeMode;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,7 @@ class WafrahApp extends StatelessWidget {
       title: 'وِفرة',
       theme: buildAppTheme(Brightness.light),
       darkTheme: buildAppTheme(Brightness.dark),
-      themeMode: ThemeMode.system,
+      themeMode: initialThemeMode,
       locale: const Locale('ar'),
       supportedLocales: const [Locale('ar')],
       localizationsDelegates: const [

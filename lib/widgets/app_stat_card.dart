@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 import '../core/constants/app_strings.dart';
 import '../core/utils/number_formatter.dart';
 
@@ -39,18 +39,18 @@ class AppStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppDimens.spacingMd),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.surface,
         borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: context.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppDimens.fontSizeCaption,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
           const SizedBox(height: AppDimens.gapXs),

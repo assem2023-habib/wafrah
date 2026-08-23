@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 import '../core/constants/app_strings.dart';
 
 class BottomNav extends StatelessWidget {
@@ -32,9 +32,9 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: context.surface,
+        border: Border(top: BorderSide(color: context.border)),
       ),
       child: SafeArea(
         top: false,
@@ -74,7 +74,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? AppColors.primary : AppColors.textSecondary;
+    final color = active ? context.primary : context.textSecondary;
     return InkWell(
       onTap: onTap,
       child: Column(
@@ -97,7 +97,7 @@ class _NavItem extends StatelessWidget {
             width: 20,
             height: 3,
             decoration: BoxDecoration(
-              color: active ? AppColors.primary : Colors.transparent,
+              color: active ? context.primary : Colors.transparent,
               borderRadius: BorderRadius.circular(AppDimens.radiusFull),
             ),
           ),

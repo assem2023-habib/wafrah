@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:intl/intl.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 import '../core/constants/app_strings.dart';
 import '../core/utils/number_formatter.dart';
 
@@ -88,9 +88,9 @@ class _AppDatePickerState extends State<AppDatePicker> {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isSelected ? AppColors.primary : null,
+          color: isSelected ? context.primary : null,
           border: isToday && !isSelected
-              ? Border.all(color: AppColors.primary, width: 1.5)
+              ? Border.all(color: context.primary, width: 1.5)
               : null,
         ),
         child: Text(
@@ -101,10 +101,10 @@ class _AppDatePickerState extends State<AppDatePicker> {
                 ? AppDimens.fontWeightMedium
                 : AppDimens.fontWeightNormal,
             color: isSelected
-                ? AppColors.onPrimary
+                ? context.onPrimary
                 : (isCurrentMonth
-                    ? AppColors.textPrimary
-                    : AppColors.textSecondary),
+                    ? context.textPrimary
+                    : context.textSecondary),
           ),
         ),
       ),
@@ -125,9 +125,9 @@ class _AppDatePickerState extends State<AppDatePicker> {
       width: 320,
       padding: const EdgeInsets.all(AppDimens.spacingMd),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.surface,
         borderRadius: BorderRadius.circular(AppDimens.radiusXl),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: context.border),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -140,10 +140,10 @@ class _AppDatePickerState extends State<AppDatePicker> {
                   fixedSize:
                       const Size(AppDimens.iconButton, AppDimens.iconButton),
                 ),
-                icon: const Icon(
+                icon: Icon(
                   TablerIcons.chevron_right,
                   size: AppDimens.iconLg,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
               Expanded(
@@ -151,10 +151,10 @@ class _AppDatePickerState extends State<AppDatePicker> {
                   DateFormat('MMMM yyyy', 'ar')
                       .format(DateTime(_year, _month)),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDimens.fontSizeHeading,
                     fontWeight: AppDimens.fontWeightMedium,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
               ),
@@ -164,10 +164,10 @@ class _AppDatePickerState extends State<AppDatePicker> {
                   fixedSize:
                       const Size(AppDimens.iconButton, AppDimens.iconButton),
                 ),
-                icon: const Icon(
+                icon: Icon(
                   TablerIcons.chevron_left,
                   size: AppDimens.iconLg,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
             ],
@@ -180,10 +180,10 @@ class _AppDatePickerState extends State<AppDatePicker> {
                   child: Center(
                     child: Text(
                       AppStrings.weekdayLetters[i],
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: AppDimens.fontSizeLabel,
                         fontWeight: AppDimens.fontWeightMedium,
-                        color: AppColors.textSecondary,
+                        color: context.textSecondary,
                       ),
                     ),
                   ),

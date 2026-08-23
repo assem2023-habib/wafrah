@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 
@@ -33,7 +34,9 @@ void main() {
 
   testWidgets('App renders smoke test', (WidgetTester tester) async {
     RepositoryBindings.init();
-    await tester.pumpWidget(const WafrahApp());
+    await tester.pumpWidget(
+      const WafrahApp(initialThemeMode: ThemeMode.system),
+    );
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
 

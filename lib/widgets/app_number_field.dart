@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 
 class AppNumberField extends StatelessWidget {
   const AppNumberField({
@@ -70,10 +70,10 @@ class AppNumberField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: AppDimens.fontSizeLabel,
             fontWeight: AppDimens.fontWeightMedium,
-            color: AppColors.textSecondary,
+            color: context.textSecondary,
           ),
         ),
         const SizedBox(height: AppDimens.gapSm),
@@ -92,7 +92,7 @@ class AppNumberField extends StatelessWidget {
             ),
             decoration: InputDecoration(
               suffixText: suffix,
-              suffixStyle: const TextStyle(color: AppColors.textSecondary),
+              suffixStyle: TextStyle(color: context.textSecondary),
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
               isDense: true,
@@ -103,9 +103,9 @@ class AppNumberField extends StatelessWidget {
           const SizedBox(height: AppDimens.gapXs),
           Text(
             errorText!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppDimens.fontSizeCaption,
-              color: AppColors.danger,
+              color: context.danger,
             ),
           ),
         ],

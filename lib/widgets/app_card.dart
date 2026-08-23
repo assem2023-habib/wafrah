@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({
@@ -10,7 +10,7 @@ class AppCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(AppDimens.spacingMd),
     this.margin,
     this.onTap,
-    this.color = AppColors.surface,
+    this.color,
     this.radius = AppDimens.radiusLg,
   });
 
@@ -18,7 +18,9 @@ class AppCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final VoidCallback? onTap;
-  final Color color;
+
+  /// Pass null (default) to use the theme surface color.
+  final Color? color;
   final double radius;
 
   @override
@@ -28,9 +30,9 @@ class AppCard extends StatelessWidget {
       margin: margin,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: color,
+        color: color ?? context.surface,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: AppColors.border, width: 1),
+        border: Border.all(color: context.border, width: 1),
       ),
       child: Material(
         color: Colors.transparent,

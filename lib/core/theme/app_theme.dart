@@ -3,6 +3,31 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_dimens.dart';
 
+extension AppPalette on BuildContext {
+  ThemeData get _theme => Theme.of(this);
+  ColorScheme get _scheme => _theme.colorScheme;
+
+  Color get background => _theme.scaffoldBackgroundColor;
+  Color get surface => _scheme.surface;
+  Color get primary => _scheme.primary;
+  Color get onPrimary => _scheme.onPrimary;
+  Color get secondary => _scheme.secondary;
+  Color get onSecondary => _scheme.onSecondary;
+  Color get textPrimary => _scheme.onSurface;
+  Color get textSecondary => _scheme.onSurfaceVariant;
+  Color get muted => _scheme.surfaceContainerHighest;
+  Color get onMuted => _scheme.onSurface;
+  Color get border => _scheme.outline;
+  Color get danger => _scheme.error;
+  Color get dangerBg => _scheme.errorContainer;
+  Color get onDangerBg => _scheme.onErrorContainer;
+
+  List<Color> get chartColors =>
+      _theme.brightness == Brightness.dark
+          ? AppColors.darkChart
+          : AppColors.lightChart;
+}
+
 ThemeData buildAppTheme(Brightness brightness) {
   final isDark = brightness == Brightness.dark;
   Color c(Color light, Color dark) => isDark ? dark : light;

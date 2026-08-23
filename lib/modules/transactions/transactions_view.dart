@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimens.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/utils/number_formatter.dart';
 import '../../data/models/category.dart';
@@ -85,10 +85,10 @@ class _SearchBarState extends State<_SearchBar> {
         label: '',
         controller: _controller,
         hint: AppStrings.searchHint,
-        prefix: const Icon(
+        prefix: Icon(
           TablerIcons.search,
           size: AppDimens.iconMd,
-          color: AppColors.textSecondary,
+          color: context.textSecondary,
         ),
         onChanged: controller.setSearchQuery,
       ),
@@ -233,7 +233,7 @@ class _FilterPill extends StatelessWidget {
           vertical: AppDimens.gapSm,
         ),
         decoration: BoxDecoration(
-          color: selected ? AppColors.primary : AppColors.muted,
+          color: selected ? context.primary : context.muted,
           borderRadius: BorderRadius.circular(AppDimens.radiusFull),
         ),
         child: Text(
@@ -243,7 +243,7 @@ class _FilterPill extends StatelessWidget {
             fontWeight: selected
                 ? AppDimens.fontWeightMedium
                 : AppDimens.fontWeightNormal,
-            color: selected ? AppColors.onPrimary : AppColors.textSecondary,
+            color: selected ? context.onPrimary : context.textSecondary,
           ),
         ),
       ),
@@ -297,10 +297,10 @@ class _Content extends StatelessWidget {
                   ),
                   child: Text(
                     NumberFormatter.formatFullDate(day),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: AppDimens.fontWeightMedium,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                 ),
@@ -313,10 +313,10 @@ class _Content extends StatelessWidget {
                     children: [
                       for (var i = 0; i < transactions.length; i++) ...[
                         if (i > 0)
-                          const Divider(
+                          Divider(
                             height: 1,
                             thickness: 1,
-                            color: AppColors.border,
+                            color: context.border,
                           ),
                         TransactionItem(
                           transaction: transactions[i],

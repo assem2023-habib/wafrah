@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 
 class AppErrorBanner extends StatelessWidget {
   const AppErrorBanner({
@@ -22,24 +22,24 @@ class AppErrorBanner extends StatelessWidget {
         vertical: AppDimens.gapSm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.dangerBg,
+        color: context.dangerBg,
         borderRadius: BorderRadius.circular(AppDimens.radiusMd),
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             TablerIcons.alert_triangle,
             size: AppDimens.iconMd,
-            color: AppColors.danger,
+            color: context.danger,
           ),
           const SizedBox(width: AppDimens.gapSm),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppDimens.fontSizeLabel,
                 fontWeight: AppDimens.fontWeightMedium,
-                color: AppColors.danger,
+                color: context.danger,
               ),
             ),
           ),
@@ -50,10 +50,10 @@ class AppErrorBanner extends StatelessWidget {
                 fixedSize:
                     const Size(AppDimens.iconButton, AppDimens.iconButton),
               ),
-              icon: const Icon(
+              icon: Icon(
                 TablerIcons.x,
                 size: AppDimens.iconMd,
-                color: AppColors.danger,
+                color: context.danger,
               ),
             ),
         ],

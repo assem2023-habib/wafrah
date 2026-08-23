@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 import 'app_buttons.dart';
 
 class AppEmptyState extends StatelessWidget {
@@ -31,24 +31,24 @@ class AppEmptyState extends StatelessWidget {
             Container(
               width: 88,
               height: 88,
-              decoration: const BoxDecoration(
-                color: AppColors.muted,
+              decoration: BoxDecoration(
+                color: context.muted,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
                 size: 48,
-                color: AppColors.textSecondary,
+                color: context.textSecondary,
               ),
             ),
             const SizedBox(height: AppDimens.spacingMd),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: AppDimens.fontWeightMedium,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
             if (description != null) ...[
@@ -56,9 +56,9 @@ class AppEmptyState extends StatelessWidget {
               Text(
                 description!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: AppDimens.fontSizeLabel,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
               ),
             ],

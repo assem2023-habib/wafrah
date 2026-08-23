@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 
 class AppDropdownField<T> extends StatelessWidget {
   const AppDropdownField({
@@ -31,9 +31,9 @@ class AppDropdownField<T> extends StatelessWidget {
           margin: const EdgeInsets.all(AppDimens.spacingMd),
           padding: const EdgeInsets.symmetric(vertical: AppDimens.spacingSm),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: sheetContext.surface,
             borderRadius: BorderRadius.circular(AppDimens.radiusXl),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: sheetContext.border),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.06),
@@ -53,7 +53,7 @@ class AppDropdownField<T> extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppDimens.radiusMd),
                     ),
-                    tileColor: item == selected ? AppColors.muted : null,
+                    tileColor: item == selected ? sheetContext.muted : null,
                     title: Text(
                       display(item),
                       style: TextStyle(
@@ -62,15 +62,15 @@ class AppDropdownField<T> extends StatelessWidget {
                             ? AppDimens.fontWeightMedium
                             : AppDimens.fontWeightNormal,
                         color: item == selected
-                            ? AppColors.primary
-                            : AppColors.textPrimary,
+                            ? sheetContext.primary
+                            : sheetContext.textPrimary,
                       ),
                     ),
                     trailing: item == selected
-                        ? const Icon(
+                        ? Icon(
                             TablerIcons.check,
                             size: AppDimens.iconMd,
-                            color: AppColors.primary,
+                            color: sheetContext.primary,
                           )
                         : null,
                   ),
@@ -93,10 +93,10 @@ class AppDropdownField<T> extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: AppDimens.fontSizeLabel,
             fontWeight: AppDimens.fontWeightMedium,
-            color: AppColors.textSecondary,
+            color: context.textSecondary,
           ),
         ),
         const SizedBox(height: AppDimens.gapSm),
@@ -107,9 +107,9 @@ class AppDropdownField<T> extends StatelessWidget {
             height: AppDimens.fieldHeight,
             padding: const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: context.surface,
               borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: context.border),
             ),
             child: Row(
               children: [
@@ -119,17 +119,17 @@ class AppDropdownField<T> extends StatelessWidget {
                     style: TextStyle(
                       fontSize: AppDimens.fontSizeBody,
                       color: selected == null
-                          ? AppColors.textSecondary
-                          : AppColors.textPrimary,
+                          ? context.textSecondary
+                          : context.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const Icon(
+                Icon(
                   TablerIcons.chevron_down,
                   size: AppDimens.iconMd,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
               ],
             ),

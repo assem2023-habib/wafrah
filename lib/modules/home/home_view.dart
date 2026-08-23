@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimens.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/theme/theme_service.dart';
 import '../../core/utils/number_formatter.dart';
 import '../../data/models/transaction.dart';
 import '../../routes/app_routes.dart';
@@ -67,14 +68,14 @@ class _Header extends StatelessWidget {
       padding: const EdgeInsets.all(AppDimens.spacingMd),
       child: Row(
         children: [
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 AppStrings.welcome,
                 style: TextStyle(
                   fontSize: AppDimens.fontSizeCaption,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
               ),
               Text(
@@ -82,7 +83,7 @@ class _Header extends StatelessWidget {
                 style: TextStyle(
                   fontSize: AppDimens.fontSizeHeading,
                   fontWeight: AppDimens.fontWeightMedium,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
             ],
@@ -90,9 +91,11 @@ class _Header extends StatelessWidget {
           const Spacer(),
           AppIconButton(
             icon: TablerIcons.moon,
-            onPressed: () => Get.changeThemeMode(
-              Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
-            ),
+            onPressed: () {
+              final mode = Get.isDarkMode ? ThemeMode.light : ThemeMode.dark;
+              Get.changeThemeMode(mode);
+              ThemeService.save(mode);
+            },
           ),
           const SizedBox(width: AppDimens.gapSm),
           AppIconButton(
@@ -196,7 +199,7 @@ class _HomeList extends StatelessWidget {
                 icon: TablerIcons.arrow_up,
                 label: AppStrings.totalIncome,
                 value: controller.totalIncome,
-                color: AppColors.primary,
+                color: context.primary,
               ),
             ),
             const SizedBox(width: AppDimens.gapSm),
@@ -205,7 +208,7 @@ class _HomeList extends StatelessWidget {
                 icon: TablerIcons.arrow_down,
                 label: AppStrings.totalExpense,
                 value: controller.totalExpense,
-                color: AppColors.secondary,
+                color: context.secondary,
               ),
             ),
           ],
@@ -213,12 +216,12 @@ class _HomeList extends StatelessWidget {
         const SizedBox(height: AppDimens.spacingLg),
         Row(
           children: [
-            const Text(
+            Text(
               AppStrings.recentTransactions,
               style: TextStyle(
                 fontSize: AppDimens.fontSizeBody,
                 fontWeight: AppDimens.fontWeightMedium,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
               ),
             ),
             const Spacer(),
@@ -235,10 +238,10 @@ class _HomeList extends StatelessWidget {
             children: [
               for (var i = 0; i < lastFive.length; i++) ...[
                 if (i > 0)
-                  const Divider(
+                  Divider(
                     height: 1,
                     thickness: 1,
-                    color: AppColors.border,
+                    color: context.border,
                   ),
                 _StaggeredItem(
                   index: i,
@@ -263,7 +266,7 @@ class _BalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      color: AppColors.primary,
+      color: context.primary,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -271,7 +274,7 @@ class _BalanceCard extends StatelessWidget {
             AppStrings.balance,
             style: TextStyle(
               fontSize: AppDimens.fontSizeCaption,
-              color: AppColors.onPrimary.withValues(alpha: 0.8),
+              color: context.onPrimary.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: AppDimens.gapSm),
@@ -288,20 +291,20 @@ class _BalanceCard extends StatelessWidget {
                     NumberFormatter.formatSyp(value),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppDimens.fontSizeStatLg,
                       fontWeight: AppDimens.fontWeightMedium,
-                      color: AppColors.onPrimary,
+                      color: context.onPrimary,
                     ),
                   ),
                 ),
               ),
               const SizedBox(width: AppDimens.gapXs),
-              const Text(
+              Text(
                 AppStrings.currencyUnit,
                 style: TextStyle(
                   fontSize: AppDimens.fontSizeLabel,
-                  color: AppColors.onPrimary,
+                  color: context.onPrimary,
                 ),
               ),
             ],
@@ -311,7 +314,7 @@ class _BalanceCard extends StatelessWidget {
             AppStrings.allTransactions,
             style: TextStyle(
               fontSize: AppDimens.fontSizeCaption,
-              color: AppColors.onPrimary.withValues(alpha: 0.6),
+              color: context.onPrimary.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -351,9 +354,9 @@ class _SummaryCard extends StatelessWidget {
                 const SizedBox(width: AppDimens.gapXs),
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDimens.fontSizeCaption,
-                    color: AppColors.textSecondary,
+                    color: context.textSecondary,
                   ),
                 ),
               ],
@@ -375,11 +378,11 @@ class _SummaryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppDimens.gapXs),
-            const Text(
+            Text(
               AppStrings.currencyUnit,
               style: TextStyle(
                 fontSize: AppDimens.fontSizeCaption,
-                color: AppColors.textSecondary,
+                color: context.textSecondary,
               ),
             ),
           ],
@@ -469,7 +472,7 @@ class _SpeedDialState extends State<_SpeedDial> {
                     children: [
                       _ActionPill(
                         label: AppStrings.addIncome,
-                        color: AppColors.primary,
+                        color: context.primary,
                         onTap: () {
                           _close();
                           Get.toNamed(AppRoutes.addIncome);
@@ -478,7 +481,7 @@ class _SpeedDialState extends State<_SpeedDial> {
                       const SizedBox(height: AppDimens.gapMd),
                       _ActionPill(
                         label: AppStrings.addExpense,
-                        color: AppColors.secondary,
+                        color: context.secondary,
                         onTap: () {
                           _close();
                           Get.toNamed(AppRoutes.addExpense);
@@ -497,7 +500,7 @@ class _SpeedDialState extends State<_SpeedDial> {
               height: _fabSize,
               duration: AppDimens.durFast,
               decoration: BoxDecoration(
-                color: _open ? AppColors.textPrimary : AppColors.primary,
+                color: _open ? context.textPrimary : context.primary,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -514,7 +517,7 @@ class _SpeedDialState extends State<_SpeedDial> {
                 child: Icon(
                   TablerIcons.plus,
                   size: 26,
-                  color: _open ? AppColors.background : AppColors.onPrimary,
+                  color: _open ? context.background : context.onPrimary,
                 ),
               ),
             ),
@@ -595,15 +598,15 @@ class _ActionPill extends StatelessWidget {
             Icon(
               isIncome ? TablerIcons.trending_up : TablerIcons.trending_down,
               size: 15,
-              color: AppColors.onPrimary,
+              color: context.onPrimary,
             ),
             const SizedBox(width: AppDimens.gapXs),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppDimens.fontSizeLabel,
                 fontWeight: AppDimens.fontWeightMedium,
-                color: AppColors.onPrimary,
+                color: context.onPrimary,
               ),
             ),
           ],

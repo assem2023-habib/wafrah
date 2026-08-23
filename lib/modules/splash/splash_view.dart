@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimens.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
 
 class SplashView extends StatelessWidget {
@@ -11,7 +11,7 @@ class SplashView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.background,
       body: SafeArea(
         child: Center(
           child: Column(
@@ -22,14 +22,14 @@ class SplashView extends StatelessWidget {
                   Container(
                     width: 84,
                     height: 84,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
+                    decoration: BoxDecoration(
+                      color: context.primary,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       TablerIcons.wallet,
                       size: 38,
-                      color: AppColors.onPrimary,
+                      color: context.onPrimary,
                     ),
                   ),
                   Positioned(
@@ -38,8 +38,8 @@ class SplashView extends StatelessWidget {
                     child: Container(
                       width: 9,
                       height: 9,
-                      decoration: const BoxDecoration(
-                        color: AppColors.secondary,
+                      decoration: BoxDecoration(
+                        color: context.secondary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -47,20 +47,20 @@ class SplashView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppDimens.spacingLg),
-              const Text(
+              Text(
                 AppStrings.appName,
                 style: TextStyle(
                   fontSize: AppDimens.fontSizeHeadingLg,
                   fontWeight: AppDimens.fontWeightMedium,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
               const SizedBox(height: AppDimens.gapSm),
-              const Text(
+              Text(
                 AppStrings.loading,
                 style: TextStyle(
                   fontSize: AppDimens.fontSizeCaption,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
               ),
               const SizedBox(height: AppDimens.spacingMd),
@@ -107,7 +107,7 @@ class _PulsingDotsState extends State<_PulsingDots>
                 width: 7,
                 height: 7,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(
+                  color: context.primary.withValues(
                     alpha: 0.25 + 0.75 * ((_controller.value * 3 - i) % 3 / 3),
                   ),
                   shape: BoxShape.circle,

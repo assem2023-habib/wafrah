@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
 import '../core/constants/app_strings.dart';
+import '../core/theme/app_theme.dart';
 import '../core/utils/number_formatter.dart';
 import 'app_date_picker.dart';
 
@@ -40,10 +40,10 @@ class AppDateField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: AppDimens.fontSizeLabel,
             fontWeight: AppDimens.fontWeightMedium,
-            color: AppColors.textSecondary,
+            color: context.textSecondary,
           ),
         ),
         const SizedBox(height: AppDimens.gapSm),
@@ -54,16 +54,16 @@ class AppDateField extends StatelessWidget {
             height: AppDimens.fieldHeight,
             padding: const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: context.surface,
               borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: context.border),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   TablerIcons.calendar,
                   size: AppDimens.iconMd,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                 ),
                 const SizedBox(width: AppDimens.gapSm),
                 Expanded(
@@ -74,8 +74,8 @@ class AppDateField extends StatelessWidget {
                     style: TextStyle(
                       fontSize: AppDimens.fontSizeBody,
                       color: value == null
-                          ? AppColors.textSecondary
-                          : AppColors.textPrimary,
+                          ? context.textSecondary
+                          : context.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

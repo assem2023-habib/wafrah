@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 import 'app_buttons.dart';
 
 class PageHeader extends StatelessWidget {
@@ -32,10 +32,10 @@ class PageHeader extends StatelessWidget {
           child: Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppDimens.fontSizeHeading,
               fontWeight: AppDimens.fontWeightMedium,
-              color: AppColors.textPrimary,
+              color: context.textPrimary,
             ),
           ),
         ),

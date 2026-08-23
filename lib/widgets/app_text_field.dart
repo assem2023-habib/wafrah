@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 
 class AppTextField extends StatelessWidget {
   const AppTextField({
@@ -35,10 +35,10 @@ class AppTextField extends StatelessWidget {
         if (label.isNotEmpty) ...[
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppDimens.fontSizeLabel,
               fontWeight: AppDimens.fontWeightMedium,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
           const SizedBox(height: AppDimens.gapSm),
@@ -53,10 +53,10 @@ class AppTextField extends StatelessWidget {
             style: const TextStyle(fontSize: AppDimens.fontSizeBody),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: const TextStyle(color: AppColors.textSecondary),
+              hintStyle: TextStyle(color: context.textSecondary),
               prefixIcon: prefix,
               suffixText: suffixText,
-              suffixStyle: const TextStyle(color: AppColors.textSecondary),
+              suffixStyle: TextStyle(color: context.textSecondary),
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
               isDense: true,
@@ -67,9 +67,9 @@ class AppTextField extends StatelessWidget {
           const SizedBox(height: AppDimens.gapXs),
           Text(
             errorText!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppDimens.fontSizeCaption,
-              color: AppColors.danger,
+              color: context.danger,
             ),
           ),
         ],

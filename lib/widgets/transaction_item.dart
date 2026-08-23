@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
-import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimens.dart';
+import '../core/theme/app_theme.dart';
 import '../core/constants/app_strings.dart';
 import '../core/utils/number_formatter.dart';
 import '../data/models/transaction.dart';
@@ -22,7 +22,7 @@ class TransactionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == TransactionType.income;
-    final color = isIncome ? AppColors.primary : AppColors.secondary;
+    final color = isIncome ? context.primary : context.secondary;
     final icon = isIncome ? TablerIcons.arrow_up : TablerIcons.arrow_down;
     final name = categoryName ??
         (isIncome ? AppStrings.incomeBadge : AppStrings.expenseBadge);
@@ -63,7 +63,7 @@ class TransactionItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: AppDimens.fontSizeBody,
                       fontWeight: AppDimens.fontWeightMedium,
-                      color: AppColors.textPrimary,
+                      color: context.textPrimary,
                     ),
                   ),
                   const SizedBox(height: AppDimens.gapXs),
@@ -71,9 +71,9 @@ class TransactionItem extends StatelessWidget {
                     subtitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppDimens.fontSizeCaption,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                 ],

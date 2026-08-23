@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimens.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
 import '../../data/models/category.dart';
 import '../../widgets/app_buttons.dart';
@@ -37,8 +37,8 @@ class CategoriesView extends StatelessWidget {
                       AppDimens.iconButton,
                       AppDimens.iconButton,
                     ),
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.onPrimary,
+                    backgroundColor: context.primary,
+                    foregroundColor: context.onPrimary,
                   ),
                   icon: const Icon(
                     TablerIcons.plus,
@@ -182,17 +182,17 @@ class _IconChoice extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: selected
-              ? AppColors.primary.withValues(alpha: 0.10)
-              : AppColors.muted,
+              ? context.primary.withValues(alpha: 0.10)
+              : context.muted,
           border: Border.all(
-            color: selected ? AppColors.primary : Colors.transparent,
+            color: selected ? context.primary : Colors.transparent,
             width: 2,
           ),
         ),
         child: Icon(
           icon,
           size: AppDimens.iconMd,
-          color: selected ? AppColors.primary : AppColors.textSecondary,
+          color: selected ? context.primary : context.textSecondary,
         ),
       ),
     );
@@ -217,14 +217,14 @@ class _CategoryRow extends StatelessWidget {
           Container(
             width: AppDimens.iconXl,
             height: AppDimens.iconXl,
-            decoration: const BoxDecoration(
-              color: AppColors.muted,
+            decoration: BoxDecoration(
+              color: context.muted,
               shape: BoxShape.circle,
             ),
             child: Icon(
               controller.iconFor(category.iconCode),
               size: AppDimens.iconMd,
-              color: AppColors.onMuted,
+              color: context.onMuted,
             ),
           ),
           const SizedBox(width: AppDimens.gapMd),
@@ -236,18 +236,18 @@ class _CategoryRow extends StatelessWidget {
                   category.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDimens.fontSizeBody,
                     fontWeight: AppDimens.fontWeightMedium,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
                 const SizedBox(height: AppDimens.gapXs),
                 Text(
                   _typeLabel(category.type),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDimens.fontSizeCaption,
-                    color: AppColors.textSecondary,
+                    color: context.textSecondary,
                   ),
                 ),
               ],
