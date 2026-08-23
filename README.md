@@ -24,7 +24,40 @@
 | لوحة القيادة | الرصيد الكلي بعدّاد متحرك + إجمالي الدخل والمصاريف + آخر 5 حركات |
 | الكهرباء | تسجيل قراءات العدّاد، حساب الاستهلاك والتكلفة حسب شرائح التعرفة القابلة للتخصيص، مقياس طاقة دائري بتحذير عند 80% من الحد |
 | الإحصائيات | رسم دائري لتوزيع المصاريف ورسم مقارنة دخل/مصروف حسب اليوم/الأسبوع/الشهر |
-| التخصيص | وضع ليلي/نهاري محفوظ + تقليل الحركة + إدارة أصناف ومنتجات |
+| التخصيص | وضع ليلي/نهاري محفوظ + أيقونة جهاز تتبدل معه + تقليل الحركة + إدارة أصناف ومنتجات |
+
+---
+
+## الهوية البصرية وأيقونة التطبيق الديناميكية
+
+<p align="center">
+  <img src="assets/wifra_icon.png" width="160" alt="شعار وفرة - نهاري">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/wifra_icon_dark.png" width="160" alt="شعار وفرة - ليلي">
+</p>
+
+| المتغير | الملف | المواصفة |
+|---|---|---|
+| النهاري PNG | `assets/wifra_icon.png` | 760×760، دائرة `#6B8E6B` + محفظة `#F7F4EE` + نقطة `#C97B4A` |
+| الليلي PNG | `assets/wifra_icon_dark.png` | 520×520، دائرة `#1E1D1A` + محفظة `#EDEAE2` + نقطة `#D99568` |
+| النهاري SVG | `assets/wifra_icon.svg` | 212×212 viewBox بهامش 16px متساوٍ من كل الجهات |
+| الليلي SVG | `assets/wifra_icon_dark.svg` | 152×152 viewBox بهامش 16px متساوٍ |
+| اللوحة الأصلية | `assets/wifra_logo.png` / `.svg` | لوحة براندينغ كاملة بالنسختين والنص التسويقي |
+
+> **الهامش:** كل متجه يحمل 16px فراغاً متساوياً من الأعلى والأسفل واليمين واليسار حول الدائرة — تفادياً لالتصاق الحواف عند عرضها داخل بطاقات أو كأيقونة تكيفية.
+
+### آلية تبديل الأيقونة حسب الوضع المخزّن
+
+الوضع الافتراضي عند أول تثبيت هو **النهاري**.
+
+1. **الحفظ:** عند تبديل المفتاح في الإعدادات يُخزن `ThemeMode` في صندوق Hive مستقل `ui` (`ThemeService`) و`Motion.reduced` إن وجد، كما يُستدعى `AppIconService.setIcon(isDark)`.
+2. **الاستعادة عند الإقلاع:** `main()` يقرأ `ThemeService.load()` قبل بناء `GetMaterialApp` ويزامن الأيقونة فوراً عبر نفس القناة — لا حاجة لفتح الإعدادات من جديد.
+3. **الطبقة الواطئة (Android):** أيقونتا الجهاز مسجلتان كـ `activity-alias`ين بذات الـ `targetActivity`:
+   - `MainActivityLight` (مفعل افتراضياً) — أيقونة فاتحة + adaptive foreground فاتح
+   - `MainActivityDark` (معطّل افتراضياً) — أيقونة داكنة + خلفية `#1E1D1A`
+   - عند الاستدعاء يرسل Dart أمراً عبر قناة `com.wafrah.wafrah/app_icon` إلى `MainActivity.kt` الذي يبدّل `PackageManager.setComponentEnabledSetting` بينهما (`ENABLED`/`DISABLED` بلا قتل للتطبيق).
+
+> ملاحظة: يحتاج التبديل إلى **إعادة تثبيت نظيفة** أول مرة بعد إضافة الـ aliases (إلغاء تثبيت ثم `flutter run`) بسبب قيود النظام في تسجيل المكونات الجديدة.
 
 ---
 
@@ -57,6 +90,7 @@ lib/
 ├── core/
 │   ├── constants/    app_colors, app_dimens, app_strings, app_defaults
 │   ├── theme/        app_theme, theme_service (حفظ الثيم), motion (تقليل الحركة)
+│   ├── services/     app_icon_service (تبديل أيقونة الجهاز)
 │   └── utils/        number_formatter, validators, tariff_calculator
 ├── data/
 │   ├── hive_service.dart          تهيئة الصناديق والبيانات الأولية
@@ -65,12 +99,13 @@ lib/
 │   └── repositories/
 │       ├── interfaces/            4 واجهات مجردة
 │       └── hive/                  التنفيذات الفعلية + repository_bindings
-├── modules/           12 وحدة (كل واحدة: view + controller + binding)
+├── modules/           13 وحدة (كل واحدة: view + controller + binding)
 ├── routes/            app_routes (أسماء) + app_pages (خريطة GetX + RouteObserver)
-└── widgets/           المكوّنات المشتركة (AppCard, AppNumberField, ...)
+├── widgets/           المكوّنات المشتركة (AppCard, AppNumberField, ...)
+└── assets/            wifra_logo (لوحة), wifra_icon (+ _dark) png/svg بهامش 16px
 test/                  unit + widgets + feature (85 اختباراً)
 DOCS/                  توثيق التصميم والمنطق الأصلي + النموذج المرجعي
-readme/screens/        ملف تفصيلي لكل شاشة
+readme/screens/        ملف تفصيلي لكل شاشة (13) + 14-app-icon للأيقونة الديناميكية
 ```
 
 ## المنطق (Business Logic)
@@ -149,6 +184,7 @@ flutter analyze
 | 11 | إضافة قراءة كهرباء | [`11-add-reading.md`](readme/screens/11-add-reading.md) | `/add-reading` |
 | 12 | سجل قراءات الكهرباء | [`12-reading-log.md`](readme/screens/12-reading-log.md) | `/reading-log` |
 | 13 | الإعدادات | [`13-settings.md`](readme/screens/13-settings.md) | `/settings` |
+| 14 | أيقونة التطبيق الديناميكية | [`14-app-icon.md`](readme/screens/14-app-icon.md) | launcher |
 
 ## التوثيق الأصلي (DOCS)
 
