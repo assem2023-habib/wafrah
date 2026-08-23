@@ -188,6 +188,25 @@ readme/screens/        ملف تفصيلي لكل شاشة (13) + 14-app-icon ل
 
 > **أي نسخة أحمّل؟** جرّب المخففة `arm64-v8a` أولاً — أسرع بـ 60% تحميلاً وتثبيتاً. إن فشل التثبيت حمّل الكاملة. كلاهما يُبنى فقط عند وسم `v*` على الفرع `main` بعد نجاح `analyze` و`test` (88/88).
 
+### كيف يعمل الـ Release ولماذا تُرى بعض الـ jobs في حالة Skipped؟
+
+الـ pipeline مربوط بـ `main` لكن **إنشاء ملفات التحميل يتم فقط لنسخ الـ release** — وهذا مقصود:
+
+| الحدث | ما يعمل | ما يُتخطى ولماذا |
+|---|---|---|
+| `push` على `main` (بدون وسم) | `analyze` → `test` | `build-and-release` يظهر **Skipped** لأن شرطه `if: startsWith(github.ref, 'refs/tags/v')` غير محقق — لا ملفات تُرفع |
+| دفع وسم `v1.0.0` | `analyze` → `test` → `build-and-release` | لا شيء يُتخطى — تُبنى الـ APKs/AAB وتُرفع للـ Release |
+| تشغيل يدوي من تبويب Actions | `analyze` → `test` → `build-and-release` (يُتخطى إن لم يكن هناك وسم) | نفس منطق الـ tag |
+
+لإنشاء إصدار جديد:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+أو من GitHub: Actions → Release → Run workflow → اختر الفرع وأدخل الوسم.
+
 كل إصدار `v*` يُنشئ تلقائياً [GitHub Release](https://github.com/assem2023-habib/wafrah/releases) مع وصف مبسط للمشروع وجدول التحميل أعلاه عبر CI/CD (`.github/workflows/release.yml:37`).
 
 ## التثبيت والتشغيل
