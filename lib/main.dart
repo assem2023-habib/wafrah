@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
+import 'core/services/app_icon_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/motion.dart';
 import 'core/theme/theme_service.dart';
@@ -16,8 +17,10 @@ Future<void> main() async {
   await HiveService.seedIfNeeded();
   await ThemeService.init();
   Motion.init();
+  final initialMode = ThemeService.load();
+  await AppIconService.setIcon(isDark: initialMode == ThemeMode.dark);
   RepositoryBindings.init();
-  runApp(WafrahApp(initialThemeMode: ThemeService.load()));
+  runApp(WafrahApp(initialThemeMode: initialMode));
 }
 
 class WafrahApp extends StatelessWidget {

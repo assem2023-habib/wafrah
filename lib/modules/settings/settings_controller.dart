@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../core/constants/app_defaults.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/services/app_icon_service.dart';
 import '../../core/theme/motion.dart';
 import '../../core/theme/theme_service.dart';
 import '../../core/utils/number_formatter.dart';
@@ -81,6 +82,7 @@ class SettingsController extends GetxController {
     final mode = value ? ThemeMode.dark : ThemeMode.light;
     Get.changeThemeMode(mode);
     ThemeService.save(mode);
+    AppIconService.setIcon(isDark: value);
   }
 
   void setReduceMotion(bool value) {
