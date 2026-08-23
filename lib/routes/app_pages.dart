@@ -8,6 +8,8 @@ import '../modules/add_income/add_income_binding.dart';
 import '../modules/add_income/add_income_view.dart';
 import '../modules/categories/categories_binding.dart';
 import '../modules/categories/categories_view.dart';
+import '../modules/electricity_home/electricity_home_binding.dart';
+import '../modules/electricity_home/electricity_home_view.dart';
 import '../modules/home/home_binding.dart';
 import '../modules/home/home_view.dart';
 import '../modules/products/products_binding.dart';
@@ -76,7 +78,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.electricity,
-      page: () => const ComingSoonView(title: AppStrings.electricity),
+      page: () => const ElectricityHomeView(),
+      binding: ElectricityHomeBinding(),
     ),
     GetPage(
       name: AppRoutes.settings,
