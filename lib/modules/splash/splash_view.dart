@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:get/get.dart';
 
 import '../../core/constants/app_dimens.dart';
-import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/theme/motion.dart';
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});
@@ -95,28 +97,34 @@ class _PulsingDotsState extends State<_PulsingDots>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < 3; i++) ...[
-              if (i > 0) const SizedBox(width: AppDimens.gapXs),
-              Container(
-                width: 7,
-                height: 7,
-                decoration: BoxDecoration(
-                  color: context.primary.withValues(
-                    alpha: 0.25 + 0.75 * ((_controller.value * 3 - i) % 3 / 3),
-                  ),
-                  shape: BoxShape.circle,
-                ),
+    return Obx(
+      () => Motion.reduced.value
+          ? _buildDots((_) => 1)
+          : AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) => _buildDots(
+                (i) => 0.25 + 0.75 * ((_controller.value * 3 - i) % 3 / 3),
               ),
-            ],
-          ],
-        );
-      },
+            ),
+    );
+  }
+
+  Widget _buildDots(double Function(int index) alphaFor) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < 3; i++) ...[
+          if (i > 0) const SizedBox(width: AppDimens.gapXs),
+          Container(
+            width: 7,
+            height: 7,
+            decoration: BoxDecoration(
+              color: context.primary.withValues(alpha: alphaFor(i)),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

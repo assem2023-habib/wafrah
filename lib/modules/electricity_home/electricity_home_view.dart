@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../core/constants/app_dimens.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/motion.dart';
 import '../../core/utils/number_formatter.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/app_buttons.dart';
@@ -127,7 +128,7 @@ class _GaugeCard extends StatelessWidget {
             children: [
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0, end: progress),
-                duration: AppDimens.durCount,
+                duration: Motion.dur(AppDimens.durCount),
                 curve: Curves.easeOut,
                 builder: (context, animated, _) => _PulseOnWarning(
                   warning: warning,
@@ -197,7 +198,7 @@ class _PulseOnWarningState extends State<_PulseOnWarning>
   @override
   void didUpdateWidget(_PulseOnWarning oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.warning && !oldWidget.warning) {
+    if (widget.warning && !oldWidget.warning && !Motion.reduced.value) {
       _controller.forward(from: 0);
     }
   }

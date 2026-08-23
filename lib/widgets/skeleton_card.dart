@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../core/constants/app_dimens.dart';
+import '../core/theme/motion.dart';
 import '../core/theme/app_theme.dart';
 
 class SkeletonCard extends StatefulWidget {
@@ -34,34 +36,40 @@ class _SkeletonCardState extends State<SkeletonCard>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        final t = _controller.value;
-        return ShaderMask(
-          blendMode: BlendMode.srcATop,
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              begin: Alignment(-1.5 + t * 3, 0),
-              end: Alignment(-0.5 + t * 3, 0),
-              colors: [
-                context.muted,
-                context.onMuted,
-                context.muted,
-              ],
-              stops: const [0.3, 0.5, 0.7],
-            ).createShader(bounds);
-          },
-          child: Container(
-            width: widget.width,
-            height: widget.height,
-            decoration: BoxDecoration(
-              color: context.muted,
-              borderRadius: BorderRadius.circular(widget.radius),
+    final base = Container(
+      width: widget.width,
+      height: widget.height,
+      decoration: BoxDecoration(
+        color: context.muted,
+        borderRadius: BorderRadius.circular(widget.radius),
+      ),
+    );
+    return Obx(
+      () => Motion.reduced.value
+          ? base
+          : AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                final t = _controller.value;
+                return ShaderMask(
+                  blendMode: BlendMode.srcATop,
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                      begin: Alignment(-1.5 + t * 3, 0),
+                      end: Alignment(-0.5 + t * 3, 0),
+                      colors: [
+                        context.muted,
+                        context.onMuted,
+                        context.muted,
+                      ],
+                      stops: const [0.3, 0.5, 0.7],
+                    ).createShader(bounds);
+                  },
+                  child: child,
+                );
+              },
+              child: base,
             ),
-          ),
-        );
-      },
     );
   }
 }

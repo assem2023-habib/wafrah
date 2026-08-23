@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../core/constants/app_defaults.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/theme/motion.dart';
 import '../../core/theme/theme_service.dart';
 import '../../core/utils/number_formatter.dart';
 import '../../core/utils/validators.dart';
@@ -83,8 +84,7 @@ class SettingsController extends GetxController {
   }
 
   void setReduceMotion(bool value) {
-    reduceMotion.value = value;
-    ThemeService.saveReduceMotion(value);
+    Motion.set(value);
   }
 
   void addTier() {

@@ -3,6 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
 import '../core/constants/app_dimens.dart';
 import '../core/theme/app_theme.dart';
+import '../core/theme/motion.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key, required this.message});
@@ -17,7 +18,7 @@ class SuccessScreen extends StatelessWidget {
         children: [
           TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.5, end: 1),
-            duration: AppDimens.durMedium,
+            duration: Motion.dur(AppDimens.durMedium),
             curve: Curves.easeOutBack,
             builder: (context, scale, child) =>
                 Transform.scale(scale: scale, child: child),

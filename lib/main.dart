@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
 import 'core/theme/app_theme.dart';
+import 'core/theme/motion.dart';
 import 'core/theme/theme_service.dart';
 import 'data/hive_service.dart';
 import 'data/repositories/repository_bindings.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
   await HiveService.init();
   await HiveService.seedIfNeeded();
   await ThemeService.init();
+  Motion.init();
   RepositoryBindings.init();
   runApp(WafrahApp(initialThemeMode: ThemeService.load()));
 }

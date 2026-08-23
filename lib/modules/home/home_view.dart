@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../core/constants/app_dimens.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/theme/motion.dart';
 import '../../core/theme/theme_service.dart';
 import '../../core/utils/number_formatter.dart';
 import '../../data/models/transaction.dart';
@@ -285,7 +286,7 @@ class _BalanceCard extends StatelessWidget {
               Flexible(
                 child: TweenAnimationBuilder<double>(
                   tween: Tween(begin: 0, end: controller.balance),
-                  duration: const Duration(milliseconds: 800),
+                  duration: Motion.dur(const Duration(milliseconds: 800)),
                   curve: Curves.easeOut,
                   builder: (context, value, child) => Text(
                     NumberFormatter.formatSyp(value),
@@ -364,7 +365,7 @@ class _SummaryCard extends StatelessWidget {
             const SizedBox(height: AppDimens.gapSm),
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: value),
-              duration: AppDimens.durCount,
+              duration: Motion.dur(AppDimens.durCount),
               curve: Curves.easeOut,
               builder: (context, animated, child) => Text(
                 NumberFormatter.formatSyp(animated),
@@ -407,7 +408,7 @@ class _StaggeredItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: Duration(milliseconds: 400 + index * 80),
+      duration: Motion.dur(Duration(milliseconds: 400 + index * 80)),
       curve: Curves.easeOut,
       builder: (context, t, child) => Opacity(
         opacity: t,
@@ -461,10 +462,10 @@ class _SpeedDialState extends State<_SpeedDial> {
               ignoring: !_open,
               child: AnimatedOpacity(
                 opacity: _open ? 1 : 0,
-                duration: AppDimens.durBase,
+                duration: Motion.dur(AppDimens.durBase),
                 child: AnimatedScale(
                   scale: _open ? 1 : 0.85,
-                  duration: AppDimens.durBase,
+                  duration: Motion.dur(AppDimens.durBase),
                   alignment: Alignment.bottomLeft,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -498,7 +499,7 @@ class _SpeedDialState extends State<_SpeedDial> {
             child: AnimatedContainer(
               width: _fabSize,
               height: _fabSize,
-              duration: AppDimens.durFast,
+              duration: Motion.dur(AppDimens.durFast),
               decoration: BoxDecoration(
                 color: _open ? context.textPrimary : context.primary,
                 shape: BoxShape.circle,
@@ -512,7 +513,7 @@ class _SpeedDialState extends State<_SpeedDial> {
               ),
               child: AnimatedRotation(
                 turns: _open ? 0.125 : 0,
-                duration: AppDimens.durBase,
+                duration: Motion.dur(AppDimens.durBase),
                 alignment: Alignment.center,
                 child: Icon(
                   TablerIcons.plus,
@@ -551,7 +552,7 @@ class _PressableScaleState extends State<_PressableScale> {
         onTap: widget.onTap,
         child: AnimatedScale(
           scale: _pressed ? 0.9 : 1,
-          duration: AppDimens.durFast,
+          duration: Motion.dur(AppDimens.durFast),
           curve: Curves.easeOut,
           child: widget.child,
         ),
