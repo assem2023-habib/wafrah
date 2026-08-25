@@ -34,9 +34,7 @@ class StatisticsView extends StatelessWidget {
               child: PageHeader(title: AppStrings.statsTitle),
             ),
             _PeriodBar(controller: controller),
-            Expanded(
-              child: Obx(() => _Content(controller: controller)),
-            ),
+            Expanded(child: _Content(controller: controller)),
           ],
         ),
       ),

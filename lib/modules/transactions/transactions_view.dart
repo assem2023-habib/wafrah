@@ -3,30 +3,37 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 
 import '../../core/constants/app_dimens.dart';
-import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/utils/number_formatter.dart';
 import '../../data/models/category.dart';
 import '../../data/models/product.dart';
 import '../../data/models/transaction.dart';
 import '../../routes/app_routes.dart';
-import '../../widgets/app_buttons.dart';
 import '../../widgets/app_card.dart';
 import '../../widgets/app_dropdown_field.dart';
 import '../../widgets/app_empty_state.dart';
 import '../../widgets/app_text_field.dart';
-import '../../widgets/bottom_nav.dart';
 import '../../widgets/page_header.dart';
 import '../../widgets/skeleton_card.dart';
 import '../../widgets/transaction_item.dart';
 import 'transactions_controller.dart';
 
-class TransactionsView extends StatelessWidget {
+class TransactionsView extends StatefulWidget {
   const TransactionsView({super.key});
 
   @override
+  State<TransactionsView> createState() => _TransactionsViewState();
+}
+
+class _TransactionsViewState extends State<TransactionsView> {
+  bool _showFilters = false;
+
+  @override
   Widget build(BuildContext context) {
+    final controller = Get.find<TransactionsController>();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
@@ -34,29 +41,88 @@ class TransactionsView extends StatelessWidget {
               padding: EdgeInsets.all(AppDimens.spacingMd),
               child: PageHeader(title: AppStrings.transactionsLog),
             ),
-            const _SearchBar(),
-            _FilterBar(),
-            const SizedBox(height: AppDimens.gapSm),
-            Expanded(child: _Content()),
-            const BottomNav(
-              currentIndex: 1,
-              onTap: _onNavTap,
+            _SearchAndFilterBar(
+              showFilters: _showFilters,
+              onToggleFilters: () =>
+                  setState(() => _showFilters = !_showFilters),
             ),
+            if (_showFilters) _FiltersPanel(controller: controller),
+            Expanded(child: _Content(controller: controller)),
           ],
         ),
       ),
     );
   }
+}
 
-  static void _onNavTap(int index) {
-    switch (index) {
-      case 0:
-        Get.toNamed(AppRoutes.home);
-      case 2:
-        Get.toNamed(AppRoutes.statistics);
-      case 3:
-        Get.toNamed(AppRoutes.electricity);
-    }
+class _SearchAndFilterBar extends StatelessWidget {
+  const _SearchAndFilterBar({
+    required this.showFilters,
+    required this.onToggleFilters,
+  });
+
+  final bool showFilters;
+  final VoidCallback onToggleFilters;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<TransactionsController>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
+      child: Row(
+        children: [
+          Expanded(child: _SearchBar()),
+          const SizedBox(width: AppDimens.gapSm),
+          Obx(
+            () => _FilterToggleButton(
+              active: controller.hasFilters,
+              expanded: showFilters,
+              onTap: onToggleFilters,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterToggleButton extends StatelessWidget {
+  const _FilterToggleButton({
+    required this.active,
+    required this.expanded,
+    required this.onTap,
+  });
+
+  final bool active;
+  final bool expanded;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final highlighted = active || expanded;
+    return Tooltip(
+      message: AppStrings.filter,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+        child: Container(
+          width: AppDimens.fieldHeight,
+          height: AppDimens.fieldHeight,
+          decoration: BoxDecoration(
+            color: highlighted ? context.primary : context.surface,
+            borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+            border: Border.all(
+              color: highlighted ? context.primary : context.border,
+            ),
+          ),
+          child: Icon(
+            TablerIcons.filter,
+            size: AppDimens.iconMd,
+            color: highlighted ? context.onPrimary : context.textSecondary,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -79,140 +145,142 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<TransactionsController>();
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
-      child: AppTextField(
-        label: '',
-        controller: _controller,
-        hint: AppStrings.searchHint,
-        prefix: Icon(
-          TablerIcons.search,
-          size: AppDimens.iconMd,
-          color: context.textSecondary,
+    return AppTextField(
+      label: '',
+      controller: _controller,
+      hint: AppStrings.searchHint,
+      prefix: Icon(
+        TablerIcons.search,
+        size: AppDimens.iconMd,
+        color: context.textSecondary,
+      ),
+      onChanged: controller.setSearchQuery,
+    );
+  }
+}
+
+class _FiltersPanel extends StatelessWidget {
+  const _FiltersPanel({required this.controller});
+
+  final TransactionsController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: AppDimens.gapSm),
+      padding: const EdgeInsets.all(AppDimens.spacingMd),
+      decoration: BoxDecoration(
+        color: context.muted.withValues(alpha: 0.4),
+        border: Border(
+          top: BorderSide(color: context.border),
+          bottom: BorderSide(color: context.border),
         ),
-        onChanged: controller.setSearchQuery,
+      ),
+      child: Obx(
+        () => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: AppDropdownField<TransactionType>(
+                    label: AppStrings.type,
+                    items: TransactionType.values,
+                    selected: controller.typeFilter.value,
+                    display: _typeLabel,
+                    hint: AppStrings.allTypes,
+                    onChanged: controller.setTypeFilter,
+                  ),
+                ),
+                const SizedBox(width: AppDimens.gapSm),
+                Expanded(
+                  child: AppDropdownField<Category>(
+                    label: AppStrings.category,
+                    items: controller.categoriesForFilter,
+                    selected: controller.categoryFilter.value,
+                    display: (category) => category.name,
+                    hint: AppStrings.allCategories,
+                    onChanged: controller.setCategoryFilter,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDimens.gapSm),
+            AppDropdownField<Product>(
+              label: AppStrings.product,
+              items: controller.productsForFilter,
+              selected: controller.productFilter.value,
+              display: (product) => product.name,
+              hint: AppStrings.allProducts,
+              onChanged: controller.setProductFilter,
+            ),
+            const SizedBox(height: AppDimens.gapSm),
+            Row(
+              children: [
+                _PeriodPill(
+                  label: AppStrings.today,
+                  selected: controller.periodFilter.value ==
+                      PeriodFilter.day,
+                  onTap: () => controller.setPeriodFilter(
+                    controller.periodFilter.value == PeriodFilter.day
+                        ? null
+                        : PeriodFilter.day,
+                  ),
+                ),
+                const SizedBox(width: AppDimens.gapSm),
+                _PeriodPill(
+                  label: AppStrings.week,
+                  selected: controller.periodFilter.value ==
+                      PeriodFilter.week,
+                  onTap: () => controller.setPeriodFilter(
+                    controller.periodFilter.value == PeriodFilter.week
+                        ? null
+                        : PeriodFilter.week,
+                  ),
+                ),
+                const SizedBox(width: AppDimens.gapSm),
+                _PeriodPill(
+                  label: AppStrings.month,
+                  selected: controller.periodFilter.value ==
+                      PeriodFilter.month,
+                  onTap: () => controller.setPeriodFilter(
+                    controller.periodFilter.value == PeriodFilter.month
+                        ? null
+                        : PeriodFilter.month,
+                  ),
+                ),
+                const Spacer(),
+                if (controller.hasFilters)
+                  TextButton(
+                    onPressed: () {
+                      controller.clearFilters();
+                    },
+                    child: Text(
+                      AppStrings.clearFilters,
+                      style: TextStyle(
+                        fontSize: AppDimens.fontSizeCaption,
+                        color: context.danger,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
-}
 
-class _FilterBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<TransactionsController>();
-    return Obx(
-      () {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimens.spacingMd),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  _FilterPill(
-                    label: AppStrings.allTypes,
-                    selected: controller.typeFilter.value == null,
-                    onTap: () => controller.setTypeFilter(null),
-                  ),
-                  const SizedBox(width: AppDimens.gapSm),
-                  _FilterPill(
-                    label: AppStrings.typeIncome,
-                    selected: controller.typeFilter.value ==
-                        TransactionType.income,
-                    onTap: () => controller
-                        .setTypeFilter(TransactionType.income),
-                  ),
-                  const SizedBox(width: AppDimens.gapSm),
-                  _FilterPill(
-                    label: AppStrings.typeExpense,
-                    selected: controller.typeFilter.value ==
-                        TransactionType.expense,
-                    onTap: () => controller
-                        .setTypeFilter(TransactionType.expense),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppDimens.gapSm),
-              Row(
-                children: [
-                  Expanded(
-                    child: AppDropdownField<Category>(
-                      label: AppStrings.category,
-                      items: controller.categoriesForFilter,
-                      selected: controller.categoryFilter.value,
-                      display: (category) => category.name,
-                      hint: AppStrings.categoryRequired,
-                      onChanged: controller.setCategoryFilter,
-                    ),
-                  ),
-                  const SizedBox(width: AppDimens.gapSm),
-                  Expanded(
-                    child: AppDropdownField<Product>(
-                      label: AppStrings.product,
-                      items: controller.productsForFilter,
-                      selected: controller.productFilter.value,
-                      display: (product) => product.name,
-                      hint: AppStrings.chooseProduct,
-                      onChanged: controller.setProductFilter,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppDimens.gapSm),
-              Row(
-                children: [
-                  _FilterPill(
-                    label: AppStrings.today,
-                    selected: controller.periodFilter.value ==
-                        PeriodFilter.day,
-                    onTap: () => controller.setPeriodFilter(
-                      controller.periodFilter.value == PeriodFilter.day
-                          ? null
-                          : PeriodFilter.day,
-                    ),
-                  ),
-                  const SizedBox(width: AppDimens.gapSm),
-                  _FilterPill(
-                    label: AppStrings.week,
-                    selected: controller.periodFilter.value ==
-                        PeriodFilter.week,
-                    onTap: () => controller.setPeriodFilter(
-                      controller.periodFilter.value == PeriodFilter.week
-                          ? null
-                          : PeriodFilter.week,
-                    ),
-                  ),
-                  const SizedBox(width: AppDimens.gapSm),
-                  _FilterPill(
-                    label: AppStrings.month,
-                    selected: controller.periodFilter.value ==
-                        PeriodFilter.month,
-                    onTap: () => controller.setPeriodFilter(
-                      controller.periodFilter.value == PeriodFilter.month
-                          ? null
-                          : PeriodFilter.month,
-                    ),
-                  ),
-                ],
-              ),
-              if (controller.hasFilters) ...[
-                const SizedBox(height: AppDimens.gapSm),
-                AppPrimaryButton(
-                  label: AppStrings.clearFilters,
-                  variant: 'danger',
-                  onPressed: controller.clearFilters,
-                ),
-              ],
-            ],
-          ),
-        );
-      },
-    );
+  String _typeLabel(TransactionType type) {
+    return switch (type) {
+      TransactionType.income => AppStrings.typeIncome,
+      TransactionType.expense => AppStrings.typeExpense,
+    };
   }
 }
 
-class _FilterPill extends StatelessWidget {
-  const _FilterPill({
+class _PeriodPill extends StatelessWidget {
+  const _PeriodPill({
     required this.label,
     required this.selected,
     required this.onTap,
@@ -230,16 +298,19 @@ class _FilterPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimens.spacingMd,
-          vertical: AppDimens.gapSm,
+          vertical: AppDimens.gapXs + 2,
         ),
         decoration: BoxDecoration(
-          color: selected ? context.primary : context.muted,
+          color: selected ? context.primary : context.surface,
           borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+          border: Border.all(
+            color: selected ? context.primary : context.border,
+          ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: AppDimens.fontSizeCaption,
             fontWeight: selected
                 ? AppDimens.fontWeightMedium
                 : AppDimens.fontWeightNormal,
@@ -252,9 +323,12 @@ class _FilterPill extends StatelessWidget {
 }
 
 class _Content extends StatelessWidget {
+  const _Content({required this.controller});
+
+  final TransactionsController controller;
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<TransactionsController>();
     return Obx(
       () {
         if (controller.loading.value) {
@@ -267,9 +341,12 @@ class _Content extends StatelessWidget {
           );
         }
         if (controller.all.isEmpty) {
-          return const AppEmptyState(
+          return AppEmptyState(
             icon: TablerIcons.receipt,
             title: AppStrings.noTransactions,
+            description: AppStrings.noResultsDesc,
+            actionLabel: AppStrings.addTransaction,
+            onAction: () => Get.toNamed(AppRoutes.addExpense),
           );
         }
         if (controller.filtered.isEmpty) {

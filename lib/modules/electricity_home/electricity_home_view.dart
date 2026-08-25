@@ -31,9 +31,7 @@ class ElectricityHomeView extends StatelessWidget {
               padding: const EdgeInsets.all(AppDimens.spacingMd),
               child: PageHeader(title: AppStrings.electricityHome),
             ),
-            Expanded(
-              child: Obx(() => _Body(controller: controller)),
-            ),
+            Expanded(child: _Body(controller: controller)),
           ],
         ),
       ),

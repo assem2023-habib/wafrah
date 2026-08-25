@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-
 import 'core/services/app_icon_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/motion.dart';
 import 'core/theme/theme_service.dart';
 import 'data/hive_service.dart';
 import 'data/repositories/repository_bindings.dart';
+import 'modules/electricity_home/electricity_home_controller.dart';
+import 'modules/home/home_controller.dart';
+import 'modules/statistics/statistics_controller.dart';
+import 'modules/transaction_detail/transaction_detail_controller.dart';
+import 'modules/transactions/transactions_controller.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 
@@ -28,6 +32,27 @@ class WafrahApp extends StatelessWidget {
 
   final ThemeMode initialThemeMode;
 
+  void _refreshOnBack(Routing? routing) {
+    if (routing == null || routing.isBack != true) {
+      return;
+    }
+    if (routing.current == AppRoutes.home) {
+      _refresh<HomeController>((c) => c.load(silent: true));
+      _refresh<TransactionsController>((c) => c.load(silent: true));
+      _refresh<StatisticsController>((c) => c.load(silent: true));
+      _refresh<ElectricityHomeController>((c) => c.load(silent: true));
+    }
+    if (routing.current == AppRoutes.transactionDetail) {
+      _refresh<TransactionDetailController>((c) => c.reloadCurrent());
+    }
+  }
+
+  void _refresh<T>(void Function(T controller) action) {
+    if (Get.isRegistered<T>()) {
+      action(Get.find<T>());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -44,7 +69,7 @@ class WafrahApp extends StatelessWidget {
       ],
       initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,
-      navigatorObservers: [AppPages.appRouteObserver],
+      routingCallback: _refreshOnBack,
     );
   }
 }

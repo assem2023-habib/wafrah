@@ -1,14 +1,12 @@
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/transaction.dart';
 import '../../data/repositories/interfaces/category_repository_interface.dart';
 import '../../data/repositories/interfaces/product_repository_interface.dart';
 import '../../data/repositories/interfaces/transaction_repository_interface.dart';
-import '../../routes/app_pages.dart' show AppPages;
 import '../../routes/app_routes.dart';
 
-class TransactionDetailController extends GetxController with RouteAware {
+class TransactionDetailController extends GetxController {
   TransactionDetailController({
     required ITransactionRepository transactionRepository,
     required ICategoryRepository categoryRepository,
@@ -37,27 +35,7 @@ class TransactionDetailController extends GetxController with RouteAware {
     }
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    final context = Get.key.currentContext;
-    if (context == null) {
-      return;
-    }
-    final route = ModalRoute.of(context);
-    if (route != null && route is PageRoute) {
-      AppPages.appRouteObserver.subscribe(this, route);
-    }
-  }
-
-  @override
-  void onClose() {
-    AppPages.appRouteObserver.unsubscribe(this);
-    super.onClose();
-  }
-
-  @override
-  void didPopNext() {
+  void reloadCurrent() {
     if (_id != null) {
       load(_id!);
     }

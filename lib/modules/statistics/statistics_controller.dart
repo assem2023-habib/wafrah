@@ -51,8 +51,10 @@ class StatisticsController extends GetxController {
     load();
   }
 
-  Future<void> load() async {
-    loading.value = true;
+  Future<void> load({bool silent = false}) async {
+    if (!silent) {
+      loading.value = true;
+    }
     try {
       final items = await _transactionRepository.getAll();
       final categories = await _categoryRepository.getAll();

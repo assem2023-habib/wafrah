@@ -51,6 +51,7 @@ class AppStrings {
   static const String deleteFailed = 'تعذر حذف القراءة، حاول مجددًا';
   static const String noProduct = 'بدون منتج محدد';
   static const String allProducts = 'كل المنتجات';
+  static const String allCategories = 'كل الأصناف';
   static const String chooseDate = 'اختر التاريخ';
   static const String fromDate = 'من تاريخ';
   static const String toDate = 'إلى تاريخ';

@@ -169,8 +169,13 @@ void main() {
     expect(find.text('راتب'), findsOneWidget);
     expect(find.text('طعام وشراب'), findsOneWidget);
 
-    await tester.tap(find.text(AppStrings.typeIncome));
-    await tester.pump();
+    await tester.tap(find.byTooltip(AppStrings.filter));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(AppStrings.allTypes));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppStrings.typeIncome).last);
+    await tester.pumpAndSettle();
 
     expect(find.text('راتب'), findsOneWidget);
     expect(find.text('طعام وشراب'), findsNothing);

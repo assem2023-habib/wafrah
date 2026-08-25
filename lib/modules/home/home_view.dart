@@ -14,7 +14,6 @@ import '../../widgets/app_buttons.dart';
 import '../../widgets/app_card.dart';
 import '../../widgets/app_empty_state.dart';
 import '../../widgets/app_error_banner.dart';
-import '../../widgets/bottom_nav.dart';
 import '../../widgets/skeleton_card.dart';
 import '../../widgets/transaction_item.dart';
 import 'home_controller.dart';
@@ -41,22 +40,10 @@ class HomeView extends StatelessWidget {
                 ],
               ),
             ),
-            const BottomNav(currentIndex: 0, onTap: _onNavTap),
           ],
         ),
       ),
     );
-  }
-
-  static void _onNavTap(int index) {
-    switch (index) {
-      case 1:
-        Get.toNamed(AppRoutes.transactions);
-      case 2:
-        Get.toNamed(AppRoutes.statistics);
-      case 3:
-        Get.toNamed(AppRoutes.electricity);
-    }
   }
 }
 
@@ -450,8 +437,8 @@ class _SpeedDialState extends State<_SpeedDial> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: _fabSize,
-      height: _fabSize,
+      width: 200,
+      height: 180,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -494,31 +481,35 @@ class _SpeedDialState extends State<_SpeedDial> {
               ),
             ),
           ),
-          _PressableScale(
-            onTap: () => setState(() => _open = !_open),
-            child: AnimatedContainer(
-              width: _fabSize,
-              height: _fabSize,
-              duration: Motion.dur(AppDimens.durFast),
-              decoration: BoxDecoration(
-                color: _open ? context.textPrimary : context.primary,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.18),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: _PressableScale(
+              onTap: () => setState(() => _open = !_open),
+              child: AnimatedContainer(
+                width: _fabSize,
+                height: _fabSize,
+                duration: Motion.dur(AppDimens.durFast),
+                decoration: BoxDecoration(
+                  color: _open ? context.textPrimary : context.primary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: AnimatedRotation(
+                  turns: _open ? 0.125 : 0,
+                  duration: Motion.dur(AppDimens.durBase),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    TablerIcons.plus,
+                    size: 26,
+                    color: _open ? context.background : context.onPrimary,
                   ),
-                ],
-              ),
-              child: AnimatedRotation(
-                turns: _open ? 0.125 : 0,
-                duration: Motion.dur(AppDimens.durBase),
-                alignment: Alignment.center,
-                child: Icon(
-                  TablerIcons.plus,
-                  size: 26,
-                  color: _open ? context.background : context.onPrimary,
                 ),
               ),
             ),

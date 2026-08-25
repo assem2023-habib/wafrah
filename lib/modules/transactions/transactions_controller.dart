@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/category.dart';
@@ -7,11 +6,10 @@ import '../../data/models/transaction.dart';
 import '../../data/repositories/interfaces/category_repository_interface.dart';
 import '../../data/repositories/interfaces/product_repository_interface.dart';
 import '../../data/repositories/interfaces/transaction_repository_interface.dart';
-import '../../routes/app_pages.dart' show AppPages;
 
 enum PeriodFilter { day, week, month }
 
-class TransactionsController extends GetxController with RouteAware {
+class TransactionsController extends GetxController {
   TransactionsController({
     required ITransactionRepository transactionRepository,
     required ICategoryRepository categoryRepository,
@@ -55,32 +53,10 @@ class TransactionsController extends GetxController with RouteAware {
     load();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    final context = Get.key.currentContext;
-    if (context == null) {
-      return;
+  Future<void> load({bool silent = false}) async {
+    if (!silent) {
+      loading.value = true;
     }
-    final route = ModalRoute.of(context);
-    if (route != null && route is PageRoute) {
-      AppPages.appRouteObserver.subscribe(this, route);
-    }
-  }
-
-  @override
-  void onClose() {
-    AppPages.appRouteObserver.unsubscribe(this);
-    super.onClose();
-  }
-
-  @override
-  void didPopNext() {
-    load();
-  }
-
-  Future<void> load() async {
-    loading.value = true;
     final transactions = await _transactionRepository.getAll();
     final categories = await _categoryRepository.getAll();
     final products = await _productRepository.getAll();

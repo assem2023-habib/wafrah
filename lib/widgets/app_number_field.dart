@@ -32,6 +32,8 @@ class AppNumberField extends StatelessWidget {
     '9': '٩',
   };
 
+  static const int maxDigits = 12;
+
   static String _formatInput(String raw) {
     final buffer = StringBuffer();
     for (var i = 0; i < raw.length; i++) {
@@ -40,7 +42,10 @@ class AppNumberField extends StatelessWidget {
         buffer.write(char);
       }
     }
-    final digits = buffer.toString().replaceFirst(RegExp(r'^0+(?=\d)'), '');
+    var digits = buffer.toString().replaceFirst(RegExp(r'^0+(?=\d)'), '');
+    if (digits.length > maxDigits) {
+      digits = digits.substring(0, maxDigits);
+    }
     if (digits.isEmpty) return '';
     final result = StringBuffer();
     for (var i = 0; i < digits.length; i++) {
@@ -52,12 +57,46 @@ class AppNumberField extends StatelessWidget {
     return result.toString();
   }
 
+  static int _digitsBeforeCaret(String text, int caret) {
+    final end = caret.clamp(0, text.length);
+    var count = 0;
+    for (var i = 0; i < end; i++) {
+      final code = text[i].codeUnitAt(0);
+      if (code >= 0x30 && code <= 0x39) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  static int _caretAfterDigits(String formatted, int digitCount) {
+    if (digitCount <= 0) {
+      return 0;
+    }
+    var seen = 0;
+    for (var i = 0; i < formatted.length; i++) {
+      final code = formatted[i].codeUnitAt(0);
+      if (code >= 0x30 && code <= 0x39) {
+        seen++;
+        if (seen == digitCount) {
+          return i + 1;
+        }
+      }
+    }
+    return formatted.length;
+  }
+
   void _handleChanged(String value) {
+    final digitsBeforeCaret = _digitsBeforeCaret(
+      value,
+      controller.selection.baseOffset,
+    );
     final formatted = _formatInput(value);
     if (formatted != value) {
+      final caret = _caretAfterDigits(formatted, digitsBeforeCaret);
       controller.value = TextEditingValue(
         text: formatted,
-        selection: TextSelection.collapsed(offset: formatted.length),
+        selection: TextSelection.collapsed(offset: caret),
       );
     }
     onChanged?.call(formatted);
