@@ -111,9 +111,10 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (controller.loading.value) {
-      return const _StatisticsSkeleton();
-    }
+    return Obx(() {
+      if (controller.loading.value) {
+        return const _StatisticsSkeleton();
+      }
     if (controller.inPeriod.isEmpty) {
       return AppEmptyState(
         icon: Icons.pie_chart_outline,
@@ -137,6 +138,7 @@ class _Content extends StatelessWidget {
         ],
       ],
     );
+    });
   }
 }
 
