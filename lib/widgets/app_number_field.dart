@@ -32,14 +32,34 @@ class AppNumberField extends StatelessWidget {
     '9': '٩',
   };
 
+  static const Map<String, String> _arabicToAscii = {
+    '٠': '0',
+    '١': '1',
+    '٢': '2',
+    '٣': '3',
+    '٤': '4',
+    '٥': '5',
+    '٦': '6',
+    '٧': '7',
+    '٨': '8',
+    '٩': '9',
+  };
+
   static const int maxDigits = 12;
+
+  static bool _isAsciiDigit(int code) => code >= 0x30 && code <= 0x39;
+  static bool _isArabicDigit(int code) => code >= 0x0660 && code <= 0x0669;
+  static bool _isDigit(int code) => _isAsciiDigit(code) || _isArabicDigit(code);
 
   static String _formatInput(String raw) {
     final buffer = StringBuffer();
     for (var i = 0; i < raw.length; i++) {
       final char = raw[i];
-      if (char.codeUnitAt(0) >= 0x30 && char.codeUnitAt(0) <= 0x39) {
+      final code = char.codeUnitAt(0);
+      if (_isAsciiDigit(code)) {
         buffer.write(char);
+      } else if (_isArabicDigit(code)) {
+        buffer.write(_arabicToAscii[char]!);
       }
     }
     var digits = buffer.toString().replaceFirst(RegExp(r'^0+(?=\d)'), '');
@@ -52,7 +72,7 @@ class AppNumberField extends StatelessWidget {
       if (i > 0 && (digits.length - i) % 3 == 0) {
         result.write(',');
       }
-      result.write(_arabicDigits[digits[i]]);
+      result.write(_arabicDigits[digits[i]]!);
     }
     return result.toString();
   }
@@ -61,8 +81,7 @@ class AppNumberField extends StatelessWidget {
     final end = caret.clamp(0, text.length);
     var count = 0;
     for (var i = 0; i < end; i++) {
-      final code = text[i].codeUnitAt(0);
-      if (code >= 0x30 && code <= 0x39) {
+      if (_isDigit(text[i].codeUnitAt(0))) {
         count++;
       }
     }
@@ -75,8 +94,7 @@ class AppNumberField extends StatelessWidget {
     }
     var seen = 0;
     for (var i = 0; i < formatted.length; i++) {
-      final code = formatted[i].codeUnitAt(0);
-      if (code >= 0x30 && code <= 0x39) {
+      if (_isDigit(formatted[i].codeUnitAt(0))) {
         seen++;
         if (seen == digitCount) {
           return i + 1;
